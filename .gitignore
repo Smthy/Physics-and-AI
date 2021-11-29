@@ -38,3 +38,12 @@ ipch/
 temp
 tmp
 .tmp
+8503 Release - 2021/.vs/CSC8503/v16/.suo
+8503 Release - 2021/.vs/CSC8503/v16/.suo
+*.tlog
+*.log
+*.db
+*.opendb
+*.idb
+*.ilk
+*.pdb
