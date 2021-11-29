@@ -8,6 +8,7 @@
 using namespace NCL;
 using namespace CSC8503;
 
+
 TutorialGame::TutorialGame()	{
 	world		= new GameWorld();
 	renderer	= new GameTechRenderer(*world);
@@ -20,6 +21,8 @@ TutorialGame::TutorialGame()	{
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
+
+	
 }
 
 /*
@@ -484,7 +487,8 @@ manipulated later. Pressing Q will let you toggle between this behaviour and ins
 letting you move the camera around. 
 
 */
-bool TutorialGame::SelectObject() {
+bool TutorialGame::SelectObject() {	
+
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q)) {
 		inSelectionMode = !inSelectionMode;
 		if (inSelectionMode) {
@@ -497,21 +501,23 @@ bool TutorialGame::SelectObject() {
 		}
 	}
 	if (inSelectionMode) {
-		renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
 
+		renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
 				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 				selectionObject = nullptr;
-				lockedObject	= nullptr;
+				lockedObject	= nullptr;			
 			}
 
-			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
+			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());			
 
 			RayCollision closestCollision;
 			if (world->Raycast(ray, closestCollision, true)) {
 				selectionObject = (GameObject*)closestCollision.node;
-				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+				Debug::DrawLine(selectionObject->GetTransform().GetPosition() + lockedOffset, selectionObject->GetTransform().GetPosition(), Debug::GREEN, 100.0f);
+				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));				
+
 				return true;
 			}
 			else {
