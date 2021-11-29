@@ -1,5 +1,7 @@
 # Prerequisites
 *.d
+ipch/
+
 
 # Compiled Object files
 *.slo
@@ -10,6 +12,7 @@
 # Precompiled Headers
 *.gch
 *.pch
+*.ipch
 
 # Compiled Dynamic libraries
 *.so
@@ -30,3 +33,8 @@
 *.exe
 *.out
 *.app
+
+# temporary
+temp
+tmp
+.tmp

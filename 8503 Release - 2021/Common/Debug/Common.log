@@ -1,0 +1,8 @@
+﻿  Assets.cpp
+  TextureWriter.cpp
+  Win32Mouse.cpp
+  Win32Window.cpp
+  Window.cpp
+  Generating Code...
+H:\Desktop\8503 Release - 2021\Common\Assets.cpp(45,9): warning C4244:  '=': conversion from 'std::streamoff' to 'size_t', possible loss of data
+  Common.vcxproj -> H:\Desktop\8503 Release - 2021\Win32\Debug\Common.lib
