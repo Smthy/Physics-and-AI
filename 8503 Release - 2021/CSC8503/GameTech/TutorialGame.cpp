@@ -553,5 +553,18 @@ added linear motion into our physics system. After the second tutorial, objects 
 line - after the third, they'll be able to twist under torque aswell.
 */
 void TutorialGame::MoveSelectedObject() {
+	renderer->DrawString("Click Force" + std::to_string(forceMagnitude), Vector2(10, 20));
+	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 10000.0f;
 
+	if (!selectionObject) {
+		return;
+	}
+
+	if (Window::GetMouse()->ButtonPressed(NCL::MouseButtons::RIGHT)) {
+		Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
+		RayCollision closestCollision;
+		if (world->Raycast(ray, closestCollision, true)) {
+			selectionObject->GetPhysicsObject()->AddForce(ray.GetDirection() * forceMagnitude);
+		}
+	}
 }
