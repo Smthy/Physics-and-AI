@@ -1,12 +1,1 @@
-﻿  Assets.cpp
-  Mouse.cpp
-  TextureWriter.cpp
-  Vector2.cpp
-  Vector3.cpp
-  Vector4.cpp
-  Win32Keyboard.cpp
-  Win32Mouse.cpp
-  Win32Window.cpp
-  Window.cpp
-  Generating Code...
-  Common.vcxproj -> H:\GitHub\Physics-and-AI\8503 Release - 2021\x64\Debug\Common.lib
+﻿  Common.vcxproj -> H:\GitHub\Physics-and-AI\8503 Release - 2021\x64\Debug\Common.lib
