@@ -1,2 +1,6 @@
 ﻿  TutorialGame.cpp
-  GameTech.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\GameTech.exe
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(482,121): error C2084:  function 'NCL::CSC8503::GameObject *NCL::CSC8503::TutorialGame::AddCapsuleToWorld(const NCL::Maths::Vector3 &,float,float,float)' already has a body
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(315): message :  see previous definition of 'AddCapsuleToWorld'
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(486,49): error C2664:  'NCL::CapsuleVolume::CapsuleVolume(const NCL::CapsuleVolume &)': cannot convert argument 1 from 'float' to 'const NCL::CapsuleVolume &'
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(486,49): message :  Reason: cannot convert from 'float' to 'const NCL::CapsuleVolume'
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(486,49): message :  No constructor could take the source type, or constructor overload resolution was ambiguous

@@ -275,7 +275,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
-	floor->GetPhysicsObject()->SetInverseMass(0);
+	floor->GetPhysicsObject()->SetInverseMass(0); //0 sets mass it infinite.
 	floor->GetPhysicsObject()->InitCubeInertia();
 
 	world->AddGameObject(floor);
@@ -304,7 +304,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
 	sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
-	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
+	sphere->GetPhysicsObject()->SetInverseMass(inverseMass); //Setting mass to inverseMass allows it to be moved
 	sphere->GetPhysicsObject()->InitSphereInertia();
 
 	world->AddGameObject(sphere);
@@ -479,7 +479,28 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	return apple;
 }
 
-/*
+GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
+	//inverseMass = 1.0f;
+	
+	GameObject* apple = new GameObject();
+	CapsuleVolume* volume = new CapsuleVolume(Vector3();
+	apple->SetBoundingVolume((CollisionVolume*)volume);
+	apple->GetTransform().
+		SetScale(Vector3(1, 1, 1))
+		.SetPosition(position);
+
+	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), enemyMesh, nullptr, basicShader));
+	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
+
+	apple->GetPhysicsObject()->SetInverseMass(inverseMass);
+	apple->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(apple);
+
+	return apple;
+}
+
+/*\
 
 Every frame, this code will let you perform a raycast, to see if there's an object
 underneath the cursor, and if so 'select it' into a pointer, so that it can be 
@@ -515,7 +536,7 @@ bool TutorialGame::SelectObject() {
 			RayCollision closestCollision;
 			if (world->Raycast(ray, closestCollision, true)) {
 				selectionObject = (GameObject*)closestCollision.node;
-				Debug::DrawLine(selectionObject->GetTransform().GetPosition() + lockedOffset, selectionObject->GetTransform().GetPosition(), Debug::GREEN, 100.0f);
+				Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::YELLOW, 100.0f);
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));				
 
 				return true;
@@ -560,7 +581,7 @@ line - after the third, they'll be able to twist under torque aswell.
 */
 void TutorialGame::MoveSelectedObject() {
 	renderer->DrawString("Click Force" + std::to_string(forceMagnitude), Vector2(10, 20));
-	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 10000.0f;
+	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 100.0f;
 
 	if (!selectionObject) {
 		return;
@@ -570,7 +591,11 @@ void TutorialGame::MoveSelectedObject() {
 		Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
 		RayCollision closestCollision;
 		if (world->Raycast(ray, closestCollision, true)) {
-			selectionObject->GetPhysicsObject()->AddForce(ray.GetDirection() * forceMagnitude);
+			Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::RED, 25.0f);
+			//selectionObject->GetPhysicsObject()->AddForce(ray.GetDirection() * forceMagnitude);
+
+			selectionObject->GetPhysicsObject()->AddForceAtPosition(ray.GetDirection() * forceMagnitude, closestCollision.collidedAt);
+
 		}
 	}
 }
