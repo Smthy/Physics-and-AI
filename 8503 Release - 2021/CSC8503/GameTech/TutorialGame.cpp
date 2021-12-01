@@ -312,6 +312,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	return sphere;
 }
 
+
 GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
 	GameObject* capsule = new GameObject();
 
@@ -478,29 +479,7 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 	return apple;
 }
-
-GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
-	//inverseMass = 1.0f;
-	
-	GameObject* apple = new GameObject();
-	CapsuleVolume* volume = new CapsuleVolume(Vector3();
-	apple->SetBoundingVolume((CollisionVolume*)volume);
-	apple->GetTransform().
-		SetScale(Vector3(1, 1, 1))
-		.SetPosition(position);
-
-	apple->SetRenderObject(new RenderObject(&apple->GetTransform(), enemyMesh, nullptr, basicShader));
-	apple->SetPhysicsObject(new PhysicsObject(&apple->GetTransform(), apple->GetBoundingVolume()));
-
-	apple->GetPhysicsObject()->SetInverseMass(inverseMass);
-	apple->GetPhysicsObject()->InitSphereInertia();
-
-	world->AddGameObject(apple);
-
-	return apple;
-}
-
-/*\
+/*
 
 Every frame, this code will let you perform a raycast, to see if there's an object
 underneath the cursor, and if so 'select it' into a pointer, so that it can be 

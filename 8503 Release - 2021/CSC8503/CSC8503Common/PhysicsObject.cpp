@@ -18,6 +18,7 @@ PhysicsObject::~PhysicsObject()	{
 }
 
 void PhysicsObject::ApplyAngularImpulse(const Vector3& force) {
+	
 	if (force.Length() > 0) {
 		bool a = true;
 	}
