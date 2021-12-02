@@ -7,7 +7,6 @@
 #include "../../Common/Window.h"
 #include "../../Common/Maths.h"
 #include "Debug.h"
-
 #include <list>
 
 using namespace NCL;
@@ -427,29 +426,27 @@ bool CollisionDetection::AABBIntersection(const AABBVolume& volumeA, const Trans
 }
 
 //Sphere / Sphere Collision
-bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
-
+bool CollisionDetection::SphereIntersection( const SphereVolume & volumeA, const Transform& worldTransformA, const SphereVolume & volumeB, const Transform& worldTransformB, CollisionInfo & collisionInfo) {	
+		
 	float radii = volumeA.GetRadius() + volumeB.GetRadius();
-	Vector3 delta = worldTransformA.GetPosition() - worldTransformB.GetPosition();
-
+	Vector3 delta = worldTransformB.GetPosition() -
+	worldTransformA.GetPosition();
 	float deltaLength = delta.Length();
-
+	
 	if (deltaLength < radii) {
 		float penetration = (radii - deltaLength);
 		Vector3 normal = delta.Normalised();
 		Vector3 localA = normal * volumeA.GetRadius();
-		Vector3 localB = -normal * volumeB.GetRadius();
-
+		Vector3 localB = -normal * volumeB.GetRadius();	
+		
 		collisionInfo.AddContactPoint(localA, localB, normal, penetration);
 		return true;
 	}
+	
 	return false;
 }
-
 //AABB - Sphere Collision
-bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 
 	Vector3 boxSize = volumeA.GetHalfDimensions();
 
@@ -473,17 +470,11 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const
 }
 
 //Oriented Bounding Box
-bool CollisionDetection::OBBIntersection(
-	const OBBVolume& volumeA, const Transform& worldTransformA,
-	const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+bool CollisionDetection::OBBIntersection( const OBBVolume& volumeA, const Transform& worldTransformA, const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 	return false;
 }
 
-bool CollisionDetection::SphereCapsuleIntersection(
-	const CapsuleVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
-
-	//Height, sphere for top/bottom and AABB middle sections
+bool CollisionDetection::SphereCapsuleIntersection(const CapsuleVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 
 	float radii = volumeA.GetRadius();
 	float height = volumeA.GetHalfHeight();

@@ -20,6 +20,7 @@ namespace NCL {
 			void InitWorld();
 
 			void InitGameExamples();
+			void InitSphereOnly();
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);

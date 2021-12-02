@@ -19,10 +19,7 @@ TutorialGame::TutorialGame()	{
 	inSelectionMode = false;
 
 	Debug::SetRenderer(renderer);
-
 	InitialiseAssets();
-
-	
 }
 
 /*
@@ -249,6 +246,9 @@ void TutorialGame::InitWorld() {
 
 	InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	InitGameExamples();
+
+	InitSphereOnly();
+
 	InitDefaultFloor();
 }
 
@@ -265,7 +265,7 @@ A single function to add a large immoveable cube to the bottom of our world
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	GameObject* floor = new GameObject();
 
-	Vector3 floorSize	= Vector3(100, 2, 100);
+	Vector3 floorSize	= Vector3(125, 1, 125);
 	AABBVolume* volume	= new AABBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	floor->GetTransform()
@@ -275,7 +275,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
-	floor->GetPhysicsObject()->SetInverseMass(0); //0 sets mass it infinite.
+	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
 	world->AddGameObject(floor);
@@ -304,8 +304,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->SetRenderObject(new RenderObject(&sphere->GetTransform(), sphereMesh, basicTex, basicShader));
 	sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
-	sphere->GetPhysicsObject()->SetInverseMass(inverseMass); //Setting mass to inverseMass allows it to be moved
-	sphere->GetPhysicsObject()->InitSphereInertia();
+	sphere->GetPhysicsObject()->SetInverseMass(inverseMass); 
 
 	world->AddGameObject(sphere);
 
@@ -403,6 +402,13 @@ void TutorialGame::InitGameExamples() {
 	AddEnemyToWorld(Vector3(5, 5, 0));
 	AddBonusToWorld(Vector3(10, 5, 0));
 }
+
+void TutorialGame::InitSphereOnly() {
+	AddSphereToWorld(Vector3(0, 5, 0), 1.0f, 1.0f);
+	AddSphereToWorld(Vector3(5, 5, 0), 1.0f, 1.0f);
+}
+
+
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
@@ -559,7 +565,7 @@ added linear motion into our physics system. After the second tutorial, objects 
 line - after the third, they'll be able to twist under torque aswell.
 */
 void TutorialGame::MoveSelectedObject() {
-	renderer->DrawString("Click Force" + std::to_string(forceMagnitude), Vector2(10, 20));
+	renderer->DrawString("Click Force " + std::to_string(forceMagnitude), Vector2(10, 20));
 	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 100.0f;
 
 	if (!selectionObject) {
@@ -570,11 +576,8 @@ void TutorialGame::MoveSelectedObject() {
 		Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
 		RayCollision closestCollision;
 		if (world->Raycast(ray, closestCollision, true)) {
-			Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::RED, 25.0f);
-			//selectionObject->GetPhysicsObject()->AddForce(ray.GetDirection() * forceMagnitude);
-
 			selectionObject->GetPhysicsObject()->AddForceAtPosition(ray.GetDirection() * forceMagnitude, closestCollision.collidedAt);
-
+			Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::RED, 25.0f);
 		}
 	}
 }
