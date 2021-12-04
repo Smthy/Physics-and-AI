@@ -1,5 +1,6 @@
 #include "PhysicsObject.h"
 #include "PhysicsSystem.h"
+#include "PositionConstraint.h"
 #include "../CSC8503Common/Transform.h"
 using namespace NCL;
 using namespace CSC8503;

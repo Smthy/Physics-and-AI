@@ -21,6 +21,8 @@ namespace NCL {
 
 			void InitGameExamples();
 			void InitSphereOnly();
+			void InitLevel1(); //Marble Run
+			void InitLevel2(); //Maze
 
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);

@@ -155,5 +155,8 @@
     <ClCompile Include="Constraint.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
+    <ClCompile Include="PositionConstraint.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 #pragma once
 #include "Constraint.h"
 #include "../../Common/Vector3.h"
+#include "../../Common/Matrix3.h"
+
 namespace NCL {
 	namespace CSC8503 {
 		class GameObject;
@@ -20,6 +22,7 @@ namespace NCL {
 			GameObject* objectA;
 			GameObject* objectB;
 			float distance;
+			Vector3 relativePos;
 		};
 	}
 }
