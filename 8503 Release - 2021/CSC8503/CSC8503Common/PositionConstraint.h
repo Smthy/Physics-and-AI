@@ -22,7 +22,7 @@ namespace NCL {
 			GameObject* objectA;
 			GameObject* objectB;
 			float distance;
-			Vector3 relativePos;
+			//Vector3 relativePos;
 		};
 	}
 }
