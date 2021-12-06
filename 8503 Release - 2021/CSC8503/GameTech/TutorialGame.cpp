@@ -247,11 +247,11 @@ void TutorialGame::InitWorld() {
 
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
-	//InitSphereOnly();
+	InitSphereOnly();
 
 	//InitLevel1();
 
-	BridgeConstraintTest();
+	//BridgeConstraintTest();
 
 	InitDefaultFloor();
 }

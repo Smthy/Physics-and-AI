@@ -1,9 +1,2 @@
 ﻿  CollisionDetection.cpp
-  GameObject.cpp
-  GameWorld.cpp
-  PhysicsObject.cpp
-  PhysicsSystem.cpp
-  PositionConstraint.cpp
-  QuadTree.cpp
-  Generating Code...
-H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\CollisionDetection.cpp(479,1): error C2143:  syntax error: missing ';' before '}'
+  CSC8503Common.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\CSC8503Common.lib
