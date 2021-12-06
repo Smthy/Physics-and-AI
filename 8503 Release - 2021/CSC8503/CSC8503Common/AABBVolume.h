@@ -9,9 +9,7 @@ namespace NCL {
 			type		= VolumeType::AABB;
 			halfSizes	= halfDims;
 		}
-		~AABBVolume() {
-
-		}
+		~AABBVolume() {	}
 
 		Vector3 GetHalfDimensions() const {
 			return halfSizes;

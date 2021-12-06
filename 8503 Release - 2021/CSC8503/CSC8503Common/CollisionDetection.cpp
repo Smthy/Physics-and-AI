@@ -418,7 +418,6 @@ bool CollisionDetection::AABBIntersection(const AABBVolume& volumeA, const Trans
 				bestAxis = faces[i];
 			}
 		}
-
 		collisionInfo.AddContactPoint(Vector3(), Vector3(), bestAxis, penetration);
 		return true;
 	}
@@ -469,10 +468,21 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const
 	return false;
 }
 
-//Oriented Bounding Box
 bool CollisionDetection::OBBIntersection( const OBBVolume& volumeA, const Transform& worldTransformA, const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+
 	return false;
 }
+
+bool CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+
+
+
+
+
+
+	return false;
+}
+
 
 bool CollisionDetection::SphereCapsuleIntersection(const CapsuleVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 

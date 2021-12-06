@@ -1,1 +1,7 @@
-﻿  GameTech.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\GameTech.exe
+﻿  GameTechRenderer.cpp
+  Main.cpp
+  TutorialGame.cpp
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\Main.cpp(32,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(444,29): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+  GameTech.vcxproj -> H:\GitHub\Physics-and-AI\8503 Release - 2021\x64\Debug\GameTech.exe

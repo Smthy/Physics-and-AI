@@ -1,4 +1,5 @@
 #include "TutorialGame.h"
+#include "../CSC8503Common/PositionConstraint.h"
 #include "../CSC8503Common/GameWorld.h"
 #include "../../Plugins/OpenGLRendering/OGLMesh.h"
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
@@ -244,13 +245,17 @@ void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
 
-	InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	InitGameExamples();
-	InitSphereOnly();
+	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
+	//InitGameExamples();
+	//InitSphereOnly();
+
+	//InitLevel1();
+
+	BridgeConstraintTest();
 
 	InitDefaultFloor();
 }
-/*
+
 void TutorialGame::BridgeConstraintTest() {
 	Vector3 cubeSize = Vector3(8, 8, 8);
 	
@@ -259,7 +264,7 @@ void TutorialGame::BridgeConstraintTest() {
 	float maxDistance = 30; // constraint distance
 	float cubeDistance = 20; // distance between links
 	
-	Vector3 startPos = Vector3(500, 500, 500);
+	Vector3 startPos = Vector3(-50, 100, 0);
 	
 	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, 0);
 	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, 0);
@@ -276,7 +281,7 @@ void TutorialGame::BridgeConstraintTest() {
 	PositionConstraint * constraint = new PositionConstraint(previous, end, maxDistance);
 	world->AddConstraint(constraint);
 }
-*/
+
 
 /*
 
@@ -287,11 +292,10 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	GameObject* floor = new GameObject();
 
 	Vector3 floorSize	= Vector3(125, 1, 125);
-	AABBVolume* volume	= new AABBVolume(floorSize);
+	OBBVolume* volume	= new OBBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
-	floor->GetTransform()
-		.SetScale(floorSize * 2)
-		.SetPosition(position);
+	
+	floor->GetTransform().SetScale(floorSize * 2).SetPosition(position).SetOrientation(Quaternion(0, 0, 1, 10.0f));
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
@@ -427,6 +431,24 @@ void TutorialGame::InitGameExamples() {
 void TutorialGame::InitSphereOnly() {
 	AddSphereToWorld(Vector3(0, 5, 0), 1.0f, 1.0f);
 	AddSphereToWorld(Vector3(5, 5, 0), 1.0f, 1.0f);
+}
+
+
+void TutorialGame::InitLevel1() {
+	//Marble Run Level.
+	//Build the world, load the ball, allow physics
+	Vector3 cubeDims = Vector3(1, 1, 1);
+	int h;
+	for (int i = 0; i < 250; i++) {
+		h = i + 5;
+		AddCubeToWorld(Vector3(0, h, 0), cubeDims);
+		//AddSphereToWorld(Vector3)
+	}
+}
+
+void TutorialGame::InitLevel2() {
+	//Maze
+	//Build the world, load the Ai and Ball, allow Ai to move.
 }
 
 
@@ -573,9 +595,7 @@ bool TutorialGame::SelectObject() {
 				lockedObject = selectionObject;
 			}
 		}
-
 	}
-
 	return false;
 }
 
@@ -601,16 +621,4 @@ void TutorialGame::MoveSelectedObject() {
 			Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::RED, 25.0f);
 		}
 	}
-}
-
-void TutorialGame::InitLevel1() {
-	//Marble Run Level.
-
-	//Build the world, load the ball, allow physics
-}
-
-void TutorialGame::InitLevel2() {
-	//Maze
-
-	//Build the world, load the Ai and Ball, allow Ai to move.
 }
