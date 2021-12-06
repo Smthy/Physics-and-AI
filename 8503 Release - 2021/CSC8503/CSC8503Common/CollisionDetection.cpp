@@ -337,6 +337,12 @@ bool CollisionDetection::ObjectIntersection(GameObject* a, GameObject* b, Collis
 	if (pairType == VolumeType::OBB) {
 		return OBBIntersection((OBBVolume&)*volA, transformA, (OBBVolume&)*volB, transformB, collisionInfo);
 	}
+	
+	if (volA->type == VolumeType::Sphere && volB->type == VolumeType::OBB) {
+		collisionInfo.a = b;
+		collisionInfo.b = a;
+		return OBBSphereIntersection((OBBVolume&)*volB, transformB, (SphereVolume&)*volA, transformA, collisionInfo);
+	}
 
 	if (volA->type == VolumeType::AABB && volB->type == VolumeType::Sphere) {
 		return AABBSphereIntersection((AABBVolume&)*volA, transformA, (SphereVolume&)*volB, transformB, collisionInfo);
@@ -476,6 +482,20 @@ bool CollisionDetection::OBBIntersection( const OBBVolume& volumeA, const Transf
 bool CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 	//rotate the OBB by the inverse of its orientation to get it into the correct position
 	
+	AABBVolume aabbVolume(volumeA.GetHalfDimensions());
+	Transform transformA;
+	Transform transformB;
+
+	Vector3 delta = worldTransformB.GetPosition() - worldTransformA.GetPosition();
+	transformB.SetPosition(worldTransformA.GetOrientation().Conjugate() * delta);
+
+	if (AABBSphereIntersection(aabbVolume, transformA, volumeB, transformB, collisionInfo))
+	{
+		collisionInfo.point.normal = worldTransformA.GetOrientation() * collisionInfo.point.normal;
+		collisionInfo.point.localA = worldTransformA.GetOrientation() * collisionInfo.point.localA;
+		collisionInfo.point.localB = worldTransformA.GetOrientation() * collisionInfo.point.localB;
+		return true;
+	}
 	return false; 		
 }
 
