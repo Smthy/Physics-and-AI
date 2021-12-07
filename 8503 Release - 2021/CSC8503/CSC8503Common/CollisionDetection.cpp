@@ -480,8 +480,6 @@ bool CollisionDetection::OBBIntersection( const OBBVolume& volumeA, const Transf
 }
 
 bool CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
-	//rotate the OBB by the inverse of its orientation to get it into the correct position
-	
 	AABBVolume aabbVolume(volumeA.GetHalfDimensions());
 	Transform transformA;
 	Transform transformB;
