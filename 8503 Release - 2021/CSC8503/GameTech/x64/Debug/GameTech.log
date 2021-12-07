@@ -1,1 +1,6 @@
-﻿  GameTech.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\GameTech.exe
+﻿  TutorialGame.cpp
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(293,43): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(438,54): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(439,55): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\GameTech\TutorialGame.cpp(445,55): warning C4305:  'argument': truncation from 'double' to 'float'
+  GameTech.vcxproj -> H:\GitHub\Physics-and-AI\8503 Release - 2021\x64\Debug\GameTech.exe

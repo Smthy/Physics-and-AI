@@ -48,17 +48,29 @@ namespace NCL {
 			void SetPhysicsObject(PhysicsObject* newObject) {
 				physicsObject = newObject;
 			}
+			
+			void SetName(string newName) {
+				name = newName;
+			}
+
+			void SetColor(Vector4 newColor) {
+				color = newColor;
+			}
 
 			const string& GetName() const {
 				return name;
 			}
-
+			
 			virtual void OnCollisionBegin(GameObject* otherObject) {
 				//std::cout << "OnCollisionBegin event occured!\n";
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
 				//std::cout << "OnCollisionEnd event occured!\n";
+			}
+
+			virtual void OnCollisionStay(GameObject* otherObject) {
+				//std::cout << "OnCollisionBegin event occured!\n";
 			}
 
 			bool GetBroadphaseAABB(Vector3&outsize) const;
@@ -83,6 +95,7 @@ namespace NCL {
 			bool	isActive;
 			int		worldID;
 			string	name;
+			Vector4 color;
 
 			Vector3 broadphaseAABB;
 		};

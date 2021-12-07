@@ -166,6 +166,8 @@ void PhysicsSystem::UpdateCollisionList() {
 			i = allCollisions.erase(i);
 		}
 		else {
+			i->a->OnCollisionStay(i->b);
+			i->b->OnCollisionStay(i->a);
 			++i;
 		}
 	}
@@ -207,10 +209,11 @@ void PhysicsSystem::BasicCollisionDetection() {
 
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info)) {
+				std::cout << "Collision between " << (*i)->GetName() << " and " << (*j)->GetName() << std::endl;
 				ImpulseResolveCollision(*info.a, *info.b, info.point);
 				info.framesLeft = numCollisionFrames;
-				allCollisions.insert(info);
-			}
+				allCollisions.insert(info);			
+			}		
 		}
 	}
 }
@@ -264,7 +267,11 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 
 	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
 	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
+
+	//Add Friction to this section
+
 }
+
 /*
 
 Later, we replace the BasicCollisionDetection method with a broadphase

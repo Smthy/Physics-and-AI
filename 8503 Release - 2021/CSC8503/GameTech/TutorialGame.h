@@ -36,8 +36,8 @@ namespace NCL {
 			void LockedObjectMovement();
 
 			GameObject* AddFloorToWorld(const Vector3& position);
-			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
-			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
+			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name,float inverseMass = 10.0f);
+			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, Quaternion Rotation, Vector4 Color, string name,float inverseMass = 10.0f);
 			
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
@@ -48,6 +48,7 @@ namespace NCL {
 			GameTechRenderer*	renderer;
 			PhysicsSystem*		physics;
 			GameWorld*			world;
+			GameObject*			Ball;
 
 			bool useGravity;
 			bool inSelectionMode;
@@ -61,7 +62,7 @@ namespace NCL {
 			OGLMesh*	sphereMesh	= nullptr;
 			OGLTexture* basicTex	= nullptr;
 			OGLShader*	basicShader = nullptr;
-
+			
 			//Coursework Meshes
 			OGLMesh*	charMeshA	= nullptr;
 			OGLMesh*	charMeshB	= nullptr;

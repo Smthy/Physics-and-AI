@@ -229,7 +229,6 @@ void TutorialGame::DebugObjectMovement() {
 			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -10, 0));
 		}
 	}
-
 }
 
 void TutorialGame::InitCamera() {
@@ -247,13 +246,13 @@ void TutorialGame::InitWorld() {
 
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
-	InitSphereOnly();
-
-	//InitLevel1();
-
+	//InitSphereOnly();
 	//BridgeConstraintTest();
 
+	InitLevel1();	
+
 	InitDefaultFloor();
+	
 }
 
 void TutorialGame::BridgeConstraintTest() {
@@ -266,12 +265,12 @@ void TutorialGame::BridgeConstraintTest() {
 	
 	Vector3 startPos = Vector3(-50, 100, 0);
 	
-	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, 0);
-	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, 0);
+	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), 0);
+	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), 0);
 	GameObject * previous = start;
 	
 	for (int i = 0; i < numLinks; ++i) {
-		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, invCubeMass);
+		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), "bridge_" + numLinks, invCubeMass);
 		PositionConstraint * constraint = new PositionConstraint(previous,
 		block, maxDistance);
 		world->AddConstraint(constraint);
@@ -282,20 +281,20 @@ void TutorialGame::BridgeConstraintTest() {
 	world->AddConstraint(constraint);
 }
 
-
 /*
 
 A single function to add a large immoveable cube to the bottom of our world
 
 */
+
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	GameObject* floor = new GameObject();
 
-	Vector3 floorSize	= Vector3(125, 1, 125);
+	Vector3 floorSize	= Vector3(125, 0.1, 125);
 	OBBVolume* volume	= new OBBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	
-	floor->GetTransform().SetScale(floorSize * 2).SetPosition(position).SetOrientation(Quaternion(0, 0, 1, 10.0f));
+	floor->GetTransform().SetScale(floorSize * 2).SetPosition(Vector3(0, -50, 0));
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
@@ -308,6 +307,32 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	return floor;
 }
 
+GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Quaternion Rotation, Vector4 color, string name,float inverseMass) {
+	GameObject* cube = new GameObject();
+
+	OBBVolume* volume = new OBBVolume(dimensions);
+	cube->SetBoundingVolume((CollisionVolume*)volume);
+
+	cube->GetTransform()
+		.SetPosition(position)
+		.SetScale(dimensions * 2)
+		.SetOrientation(Rotation);
+	
+
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
+	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+	cube->GetPhysicsObject()->SetInverseMass(0);
+	cube->GetPhysicsObject()->InitCubeInertia();
+
+	cube->SetName(name);
+	cube->SetColor(color);
+
+	world->AddGameObject(cube);
+
+	return cube;
+}
+
 /*
 
 Builds a game object that uses a sphere mesh for its graphics, and a bounding sphere for its
@@ -315,7 +340,7 @@ rigid body representation. This and the cube function will let you build a lot o
 physics worlds. You'll probably need another function for the creation of OBB cubes too.
 
 */
-GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
+GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, string name, float inverseMass) {
 	GameObject* sphere = new GameObject();
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
@@ -330,12 +355,12 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass); 
+	sphere->SetName(name);
 
 	world->AddGameObject(sphere);
 
 	return sphere;
 }
-
 
 GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass) {
 	GameObject* capsule = new GameObject();
@@ -359,33 +384,13 @@ GameObject* TutorialGame::AddCapsuleToWorld(const Vector3& position, float halfH
 
 }
 
-GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
-	GameObject* cube = new GameObject();
 
-	AABBVolume* volume = new AABBVolume(dimensions);
-
-	cube->SetBoundingVolume((CollisionVolume*)volume);
-
-	cube->GetTransform()
-		.SetPosition(position)
-		.SetScale(dimensions * 2);
-
-	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
-	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
-
-	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
-	cube->GetPhysicsObject()->InitCubeInertia();
-
-	world->AddGameObject(cube);
-
-	return cube;
-}
 
 void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
 	for (int x = 0; x < numCols; ++x) {
 		for (int z = 0; z < numRows; ++z) {
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-			AddSphereToWorld(position, radius, 1.0f);
+			AddSphereToWorld(position, radius, "Not Needed", 1.0f);
 		}
 	}
 	AddFloorToWorld(Vector3(0, -2, 0));
@@ -400,10 +405,10 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
 
 			if (rand() % 2) {
-				AddCubeToWorld(position, cubeDims);
+				AddCubeToWorld(position, cubeDims, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), "cube",10.0f);
 			}
 			else {
-				AddSphereToWorld(position, sphereRadius);
+				AddSphereToWorld(position, sphereRadius, "hello");
 			}
 		}
 	}
@@ -413,7 +418,7 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 	for (int x = 1; x < numCols+1; ++x) {
 		for (int z = 1; z < numRows+1; ++z) {
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-			AddCubeToWorld(position, cubeDims, 1.0f);
+			AddCubeToWorld(position, cubeDims, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), "cube" ,1.0f);
 		}
 	}
 }
@@ -428,30 +433,25 @@ void TutorialGame::InitGameExamples() {
 	AddBonusToWorld(Vector3(10, 5, 0));
 }
 
-void TutorialGame::InitSphereOnly() {
-	AddSphereToWorld(Vector3(0, 5, 0), 1.0f, 1.0f);
-	AddSphereToWorld(Vector3(5, 5, 0), 1.0f, 1.0f);
-}
-
-
 void TutorialGame::InitLevel1() {
-	//Marble Run Level.
-	//Build the world, load the ball, allow physics
-	Vector3 cubeDims = Vector3(1, 1, 1);
-	int h;
-	for (int i = 0; i < 250; i++) {
-		h = i + 5;
-		AddCubeToWorld(Vector3(0, h, 0), cubeDims);
-		//AddSphereToWorld(Vector3)
-	}
+
+	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Quaternion(0, 0, 1, -5.0f), Vector4(1, 0, 0, 1), "Cube_01" ,0);
+	AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3), Quaternion(0, 0, 1, 0.0f), Vector4(1, 0, 0, 1), "Cube_02", 0);
+	AddCubeToWorld(Vector3(20, -30, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
+	AddCubeToWorld(Vector3(26, -25, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
+	AddCubeToWorld(Vector3(32, -20, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
+	AddCubeToWorld(Vector3(38, -15, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
+	AddCubeToWorld(Vector3(44, -10, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);	
+	AddCubeToWorld(Vector3(57, -5, 0), Vector3(10, 0.1, 3), Quaternion(0, 0, 1, -30.0f), Vector4(1, 0, 0, 1), "Cube_01", 0);
+
+
+
+	Ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);
 }
 
 void TutorialGame::InitLevel2() {
-	//Maze
-	//Build the world, load the Ai and Ball, allow Ai to move.
+	
 }
-
-
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	float meshSize = 3.0f;
@@ -479,12 +479,9 @@ GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
 	character->GetPhysicsObject()->InitSphereInertia();
 
 	world->AddGameObject(character);
-
 	//lockedObject = character;
-
 	return character;
 }
-
 GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 	float meshSize		= 3.0f;
 	float inverseMass	= 0.5f;
@@ -508,7 +505,6 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 
 	return character;
 }
-
 GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	GameObject* apple = new GameObject();
 
@@ -605,9 +601,11 @@ determined by the scroll wheel. In the first tutorial this won't do anything, as
 added linear motion into our physics system. After the second tutorial, objects will move in a straight
 line - after the third, they'll be able to twist under torque aswell.
 */
-void TutorialGame::MoveSelectedObject() {
+void TutorialGame::MoveSelectedObject() {	
+	Vector3 distance;
+	Vector3 targetPos;
 	renderer->DrawString("Click Force " + std::to_string(forceMagnitude), Vector2(10, 20));
-	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 100.0f;
+	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 1.0f;
 
 	if (!selectionObject) {
 		return;
@@ -616,9 +614,29 @@ void TutorialGame::MoveSelectedObject() {
 	if (Window::GetMouse()->ButtonPressed(NCL::MouseButtons::RIGHT)) {
 		Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
 		RayCollision closestCollision;
-		if (world->Raycast(ray, closestCollision, true)) {
-			selectionObject->GetPhysicsObject()->AddForceAtPosition(ray.GetDirection() * forceMagnitude, closestCollision.collidedAt);
-			Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::RED, 25.0f);
+		
+		if (world->Raycast(ray, closestCollision, true)) {				
+			if (closestCollision.node == selectionObject){				
+				if (selectionObject->GetName() == "BoostPadV") {
+					targetPos = selectionObject->GetTransform().GetPosition();
+					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
+					
+					distance = targetPos - currentBallPos;
+					if (distance.Length() < 15) {
+						Ball->GetPhysicsObject()->AddForce(Vector3(10, 25, 0) * forceMagnitude);
+					}					
+				}	
+
+				if (selectionObject->GetName() == "BoostPadH") {
+					targetPos = selectionObject->GetTransform().GetPosition();
+					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
+
+					distance = targetPos - currentBallPos;
+					if (distance.Length() < 15) {
+						Ball->GetPhysicsObject()->AddForce(Vector3(0, 2, 25) * forceMagnitude);
+					}
+				}
+			}
 		}
 	}
 }

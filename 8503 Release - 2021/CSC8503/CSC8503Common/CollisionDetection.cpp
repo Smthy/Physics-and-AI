@@ -337,7 +337,11 @@ bool CollisionDetection::ObjectIntersection(GameObject* a, GameObject* b, Collis
 	if (pairType == VolumeType::OBB) {
 		return OBBIntersection((OBBVolume&)*volA, transformA, (OBBVolume&)*volB, transformB, collisionInfo);
 	}
-	
+
+	if (volA->type == VolumeType::OBB && volB->type == VolumeType::Sphere) {
+		return OBBSphereIntersection((OBBVolume&)* volA, transformA, (SphereVolume&)* volB, transformB, collisionInfo);
+	}
+
 	if (volA->type == VolumeType::Sphere && volB->type == VolumeType::OBB) {
 		collisionInfo.a = b;
 		collisionInfo.b = a;
@@ -475,11 +479,11 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const
 }
 
 bool CollisionDetection::OBBIntersection( const OBBVolume& volumeA, const Transform& worldTransformA, const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
-
 	return false;
 }
 
 bool CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA, const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+	
 	AABBVolume aabbVolume(volumeA.GetHalfDimensions());
 	Transform transformA;
 	Transform transformB;
