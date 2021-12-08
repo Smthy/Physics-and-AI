@@ -63,6 +63,16 @@ namespace NCL {
 			
 			virtual void OnCollisionBegin(GameObject* otherObject) {
 				//std::cout << "OnCollisionBegin event occured!\n";
+				
+				/*
+				if (this->name == "Ball" && otherObject->name == "BoostPadV") {
+					this->GetPhysicsObject()->AddForceAtPosition(this->GetTransform().GetPosition() * 100.0f, Vector3(0, 10, 20));
+				}
+				*/
+
+
+
+
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {

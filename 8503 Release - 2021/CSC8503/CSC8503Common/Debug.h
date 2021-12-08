@@ -30,6 +30,16 @@ namespace NCL {
 		static const Vector4 MAGENTA;
 		static const Vector4 CYAN;
 
+		static const Vector4 DARKBLUE;
+		static const Vector4 DARKGREEN;
+		static const Vector4 ORANGE;
+
+		static const Vector4 DARKPURPLE;
+		static const Vector4 DARKRED;
+		static const Vector4 TURQUOISE;
+
+
+
 	protected:
 		struct DebugStringEntry {
 			std::string	data;

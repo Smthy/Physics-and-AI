@@ -256,21 +256,21 @@ void TutorialGame::InitWorld() {
 }
 
 void TutorialGame::BridgeConstraintTest() {
-	Vector3 cubeSize = Vector3(8, 8, 8);
+	Vector3 cubeSize = Vector3(3, 0.1, 3);
 	
 	float invCubeMass = 5; //how heavy the middle pieces are
-	int numLinks = 10;
-	float maxDistance = 30; // constraint distance
-	float cubeDistance = 20; // distance between links
+	int numLinks = 8;
+	float maxDistance = 2; // constraint distance
+	float cubeDistance = 8; // distance between links
 	
 	Vector3 startPos = Vector3(-50, 100, 0);
 	
-	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), 0);
-	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), 0);
+	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Vector4(1, 0, 0, 1), "bridge", 0);
+	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, Vector4(1, 1, 1, 1), "bridge", 0);
 	GameObject * previous = start;
 	
 	for (int i = 0; i < numLinks; ++i) {
-		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), "bridge_" + numLinks, invCubeMass);
+		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Vector4(1, 1, 1, 1), "bridge", invCubeMass);
 		PositionConstraint * constraint = new PositionConstraint(previous,
 		block, maxDistance);
 		world->AddConstraint(constraint);
@@ -307,7 +307,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	return floor;
 }
 
-GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Quaternion Rotation, Vector4 color, string name,float inverseMass) {
+GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 color, string name,float inverseMass) {
 	GameObject* cube = new GameObject();
 
 	OBBVolume* volume = new OBBVolume(dimensions);
@@ -315,18 +315,17 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 
 	cube->GetTransform()
 		.SetPosition(position)
-		.SetScale(dimensions * 2)
-		.SetOrientation(Rotation);
+		.SetScale(dimensions * 2);
 	
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 
-	cube->GetPhysicsObject()->SetInverseMass(0);
+	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
 	cube->GetPhysicsObject()->InitCubeInertia();
 
 	cube->SetName(name);
-	cube->SetColor(color);
+	cube->GetRenderObject()->SetColour(color);
 
 	world->AddGameObject(cube);
 
@@ -405,7 +404,7 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
 
 			if (rand() % 2) {
-				AddCubeToWorld(position, cubeDims, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), "cube",10.0f);
+				AddCubeToWorld(position, cubeDims,  Vector4(1, 1, 1, 1), "cube",10.0f);
 			}
 			else {
 				AddSphereToWorld(position, sphereRadius, "hello");
@@ -418,7 +417,7 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 	for (int x = 1; x < numCols+1; ++x) {
 		for (int z = 1; z < numRows+1; ++z) {
 			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-			AddCubeToWorld(position, cubeDims, Quaternion(0, 0, 0, 0.0f), Vector4(1, 1, 1, 1), "cube" ,1.0f);
+			AddCubeToWorld(position, cubeDims, Vector4(1, 1, 1, 1), "cube" ,1.0f);
 		}
 	}
 }
@@ -435,17 +434,34 @@ void TutorialGame::InitGameExamples() {
 
 void TutorialGame::InitLevel1() {
 
-	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Quaternion(0, 0, 1, -5.0f), Vector4(1, 0, 0, 1), "Cube_01" ,0);
-	AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3), Quaternion(0, 0, 1, 0.0f), Vector4(1, 0, 0, 1), "Cube_02", 0);
-	AddCubeToWorld(Vector3(20, -30, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
-	AddCubeToWorld(Vector3(26, -25, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
-	AddCubeToWorld(Vector3(32, -20, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
-	AddCubeToWorld(Vector3(38, -15, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);
-	AddCubeToWorld(Vector3(44, -10, 0), Vector3(3, 8, 3), Quaternion(0, 0, 1, -25.0f), Vector4(1, 0, 0, 1), "BoostPadV", 0);	
-	AddCubeToWorld(Vector3(57, -5, 0), Vector3(10, 0.1, 3), Quaternion(0, 0, 1, -30.0f), Vector4(1, 0, 0, 1), "Cube_01", 0);
+	//Section_1
+	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Debug::ORANGE, "Cube_01" ,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -5.0f));
+	AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3),  Debug::ORANGE, "Cube_02", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(20, -30, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(26, -25, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(32, -20, 0), Vector3(3, 8, 3),  Debug::DARKGREEN, "BoostPadV", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(38, -15, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(44, -10, 0), Vector3(3, 8, 3),  Debug::DARKGREEN, "BoostPadV", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(57, -3, 0), Vector3(11, 0.1, 3), Debug::ORANGE, "Cube_03", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	
+	//section_2
+	AddCubeToWorld(Vector3(68, -2, 0), Vector3(0.1, 2, 3), Debug::DARKPURPLE, "PullWallX", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f)); //Pull Wall
+	AddCubeToWorld(Vector3(65, -2, -3), Vector3(3, 2, 0.1), Debug::DARKGREEN, "BoostPadHZ", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(65, -3.5, 5), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_04", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
+	AddCubeToWorld(Vector3(65, -3.9, 8), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_05", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
+	AddCubeToWorld(Vector3(65, -4.2, 11), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_06", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
+	AddCubeToWorld(Vector3(65, -4.4, 14), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_07", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(65, -4.4, 17), Vector3(3, 0.1, 1.5),  Debug::ORANGE, "Cube_08", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(65, -4.2, 20), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_09", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
+	AddCubeToWorld(Vector3(65, -3.9, 23), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_10", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
+	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_11", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
+	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "PullWallZ", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
+	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "BoostPadHX", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
 
-
-
+	AddCubeToWorld(Vector3(65, -3.5, 45), Vector3(5, 0.1, 8), Debug::ORANGE, "Cube_11", 0);
+	
+	
+	 
 	Ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);
 }
 
@@ -549,8 +565,11 @@ bool TutorialGame::SelectObject() {
 
 		renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
+			
 			if (selectionObject) {	//set colour to deselected;
-				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+				Vector4 newColor = selectionObject->GetRenderObject()->GetColour();
+				selectionObject->GetRenderObject()->SetColour(newColor);				
+
 				selectionObject = nullptr;
 				lockedObject	= nullptr;			
 			}
@@ -560,7 +579,7 @@ bool TutorialGame::SelectObject() {
 			RayCollision closestCollision;
 			if (world->Raycast(ray, closestCollision, true)) {
 				selectionObject = (GameObject*)closestCollision.node;
-				Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::YELLOW, 100.0f);
+				//Debug::DrawLine(selectionObject->GetTransform().GetPosition() + world->GetMainCamera()->GetPosition(), selectionObject->GetTransform().GetPosition(), Debug::YELLOW, 100.0f);
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));				
 
 				return true;
@@ -601,11 +620,12 @@ determined by the scroll wheel. In the first tutorial this won't do anything, as
 added linear motion into our physics system. After the second tutorial, objects will move in a straight
 line - after the third, they'll be able to twist under torque aswell.
 */
+
 void TutorialGame::MoveSelectedObject() {	
 	Vector3 distance;
 	Vector3 targetPos;
 	renderer->DrawString("Click Force " + std::to_string(forceMagnitude), Vector2(10, 20));
-	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 1.0f;
+	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 5.0f;
 
 	if (!selectionObject) {
 		return;
@@ -619,21 +639,46 @@ void TutorialGame::MoveSelectedObject() {
 			if (closestCollision.node == selectionObject){				
 				if (selectionObject->GetName() == "BoostPadV") {
 					targetPos = selectionObject->GetTransform().GetPosition();
-					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
-					
+					Vector3 currentBallPos = Ball->GetTransform().GetPosition();					
 					distance = targetPos - currentBallPos;
 					if (distance.Length() < 15) {
 						Ball->GetPhysicsObject()->AddForce(Vector3(10, 25, 0) * forceMagnitude);
 					}					
 				}	
 
-				if (selectionObject->GetName() == "BoostPadH") {
+				if (selectionObject->GetName() == "BoostPadHZ") {
 					targetPos = selectionObject->GetTransform().GetPosition();
 					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
-
 					distance = targetPos - currentBallPos;
 					if (distance.Length() < 15) {
-						Ball->GetPhysicsObject()->AddForce(Vector3(0, 2, 25) * forceMagnitude);
+						Ball->GetPhysicsObject()->AddForce(Vector3(0, 0, 25) * forceMagnitude);
+					}
+				}
+
+				if (selectionObject->GetName() == "BoostPadHX") {
+					targetPos = selectionObject->GetTransform().GetPosition();
+					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
+					distance = targetPos - currentBallPos;
+					if (distance.Length() < 15) {
+						Ball->GetPhysicsObject()->AddForce(Vector3(0, 0, 25) * forceMagnitude);
+					}
+				}
+
+				if (selectionObject->GetName() == "PullWallX") {
+					targetPos = selectionObject->GetTransform().GetPosition();
+					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
+					distance = targetPos - currentBallPos;
+					if (distance.Length() < 25) {
+						Ball->GetPhysicsObject()->AddForce(Vector3(10, 0, 0) * -50.0f);						
+					}
+				}
+
+				if (selectionObject->GetName() == "PullWallZ") {
+					targetPos = selectionObject->GetTransform().GetPosition();
+					Vector3 currentBallPos = Ball->GetTransform().GetPosition();
+					distance = targetPos - currentBallPos;
+					if (distance.Length() < 25) {
+						Ball->GetPhysicsObject()->AddForce(Vector3(0, 0, 10) * -50.0f);
 					}
 				}
 			}

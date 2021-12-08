@@ -18,6 +18,13 @@ const Vector4 Debug::YELLOW		= Vector4(1, 1, 0, 1);
 const Vector4 Debug::MAGENTA	= Vector4(1, 0, 1, 1);
 const Vector4 Debug::CYAN		= Vector4(0, 1, 1, 1);
 
+const Vector4 Debug::DARKBLUE = Vector4(0.05, 0.47, 0.62, 1);
+const Vector4 Debug::DARKGREEN = Vector4(0.02, 0.56, 0.14, 1);
+const Vector4 Debug::ORANGE = Vector4(0.98, 0.45, 0, 1);
+const Vector4 Debug::DARKPURPLE = Vector4(0.51, 0.39, 0.63, 1);
+const Vector4 Debug::DARKRED = Vector4(0.58, 0.02, 0.02, 1);
+const Vector4 Debug::TURQUOISE = Vector4(0.02, 0.58, 0.47, 1);
+
 
 void Debug::Print(const std::string& text, const Vector2&pos, const Vector4& colour) {
 	DebugStringEntry newEntry;

@@ -3,12 +3,10 @@
 #include "GameObject.h"
 #include "CollisionDetection.h"
 #include "../../Common/Quaternion.h"
-
 #include "Constraint.h"
-
 #include "Debug.h"
-
 #include <functional>
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -24,7 +22,7 @@ PhysicsSystem::PhysicsSystem(GameWorld& g) : gameWorld(g)	{
 	useBroadPhase	= false;	
 	dTOffset		= 0.0f;
 	globalDamping	= 0.995f;
-	SetGravity(Vector3(0.0f, -9.8f, 0.0f));
+	SetGravity(Vector3(0.0f, -20.0f, 0.0f));
 }
 
 PhysicsSystem::~PhysicsSystem()	{
@@ -224,15 +222,14 @@ so that objects separate back out.
 */
 void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const {
 	PhysicsObject * physA = a.GetPhysicsObject();
-	PhysicsObject * physB = b.GetPhysicsObject();
-	
+	PhysicsObject * physB = b.GetPhysicsObject();	
 	Transform & transformA = a.GetTransform();
 	Transform & transformB = b.GetTransform();
 	
 	float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
 	
 	if (totalMass == 0) {
-		return; //two static objects ??	
+		return;
 	}
 	
 	transformA.SetPosition(transformA.GetPosition() - (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
@@ -249,27 +246,33 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Vector3 contactVelocity = fullVelocityB - fullVelocityA;
 
 	float impulseForce = Vector3::Dot(contactVelocity, p.normal);
+	Vector3 tangent = (-contactVelocity - (p.normal * (Vector3::Dot(contactVelocity, p.normal)))).Normalised();
 	
-	Vector3 inertiaA = Vector3::Cross(physA->GetInertiaTensor() *
-	Vector3::Cross(relativeA, p.normal), relativeA);
-	
-	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() *
-	Vector3::Cross(relativeB, p.normal), relativeB);
-	
+	Vector3 inertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, p.normal), relativeA);	
+	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, p.normal), relativeB);
+	Vector3 frictionInertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, tangent), relativeA);
+	Vector3 frictionInertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, tangent), relativeB);
+
+	float fAngularEffect = Vector3::Dot(frictionInertiaA + frictionInertiaB, tangent);
+	float cFriction = 0.2f;
 	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
 	float cRestitution = 0.66f;
-	
+
 	float j = (-(1.0f + cRestitution) * impulseForce) / (totalMass + angularEffect);
 	Vector3 fullImpulse = p.normal * j;
+	float jt = (-cFriction * Vector3::Dot(contactVelocity, tangent)) / (totalMass + fAngularEffect);
+	Vector3 fullFriction = tangent * jt;
 
+	
 	physA->ApplyLinearImpulse(-fullImpulse);
 	physB->ApplyLinearImpulse(fullImpulse);
+	physA->ApplyLinearImpulse(-fullFriction);
+	physB->ApplyLinearImpulse(fullFriction);
 
 	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
 	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
-
-	//Add Friction to this section
-
+	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullFriction));
+	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullFriction));	
 }
 
 /*
