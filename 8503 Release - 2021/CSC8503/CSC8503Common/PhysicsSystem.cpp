@@ -221,34 +221,34 @@ In tutorial 5, we start determining the correct response to a collision,
 so that objects separate back out. 
 */
 void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const {
-	PhysicsObject * physA = a.GetPhysicsObject();
-	PhysicsObject * physB = b.GetPhysicsObject();	
-	Transform & transformA = a.GetTransform();
-	Transform & transformB = b.GetTransform();
-	
+	PhysicsObject* physA = a.GetPhysicsObject();
+	PhysicsObject* physB = b.GetPhysicsObject();
+	Transform& transformA = a.GetTransform();
+	Transform& transformB = b.GetTransform();
+
 	float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
-	
+
 	if (totalMass == 0) {
 		return;
 	}
-	
+
 	transformA.SetPosition(transformA.GetPosition() - (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
 	transformB.SetPosition(transformB.GetPosition() + (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
 
 	Vector3 relativeA = p.localA;
 	Vector3 relativeB = p.localB;
-	
+
 	Vector3 angVelocityA = Vector3::Cross(physA->GetAngularVelocity(), relativeA);
 	Vector3 angVelocityB = Vector3::Cross(physB->GetAngularVelocity(), relativeB);
-	
+
 	Vector3 fullVelocityA = physA->GetLinearVelocity() + angVelocityA;
 	Vector3 fullVelocityB = physB->GetLinearVelocity() + angVelocityB;
 	Vector3 contactVelocity = fullVelocityB - fullVelocityA;
 
 	float impulseForce = Vector3::Dot(contactVelocity, p.normal);
 	Vector3 tangent = (-contactVelocity - (p.normal * (Vector3::Dot(contactVelocity, p.normal)))).Normalised();
-	
-	Vector3 inertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, p.normal), relativeA);	
+
+	Vector3 inertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, p.normal), relativeA);
 	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, p.normal), relativeB);
 	Vector3 frictionInertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, tangent), relativeA);
 	Vector3 frictionInertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, tangent), relativeB);
@@ -263,7 +263,6 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	float jt = (-cFriction * Vector3::Dot(contactVelocity, tangent)) / (totalMass + fAngularEffect);
 	Vector3 fullFriction = tangent * jt;
 
-	
 	physA->ApplyLinearImpulse(-fullImpulse);
 	physB->ApplyLinearImpulse(fullImpulse);
 	physA->ApplyLinearImpulse(-fullFriction);
@@ -272,7 +271,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
 	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
 	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullFriction));
-	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullFriction));	
+	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullFriction));
 }
 
 /*

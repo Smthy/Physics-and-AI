@@ -105,6 +105,8 @@ void TutorialGame::UpdateGame(float dt) {
 	}
 
 	MovingWall(dt);
+	WindMillSpin(dt);
+
 	world->UpdateWorld(dt);
 	renderer->Update(dt);
 
@@ -113,24 +115,32 @@ void TutorialGame::UpdateGame(float dt) {
 }
 
 void TutorialGame::MovingWall(float dt) {
-	Vector3 currentPos = movingWall->GetTransform().GetPosition();
-	
-	Vector3 newPos[] = { Vector3(51, -7.5, 47), Vector3(51, -1.5, 47) }; 
+
+	Vector3 currentPos = movingWall->GetTransform().GetPosition();	
 	Vector3 distance;
+	Vector3 target = pos[pass];
 
-	Vector3 dir = distance.Normalised();
-	float speed = 2.0f;
-
-	for (int i = 0; i < 2; i++){
-		if((abs(newPos - movingWall->GetTransform().GetPosition().y) < 0.5))
-
-		
-		if (distance.Length() < 1) {
-			distance = newPos[i] - currentPos;			
-		}	
-	}
+	distance = target - currentPos;
 	
-	movingWall->GetTransform().SetPosition(currentPos + (dir * speed * dt));
+	if (distance.Length() < 1) {
+		pass++;
+		target = pos[pass];
+		
+		if (pass >= 2) {
+			pass = 0;
+		}
+	}	
+	
+	Vector3 dir = distance.Normalised();	
+	movingWall->GetTransform().SetPosition(currentPos + (dir * wallSpeed * dt));
+}
+
+void TutorialGame::WindMillSpin(float dt) {
+	
+	windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, forceMagnitude));
+
+
+
 }
 
 void TutorialGame::UpdateKeys() {
@@ -313,7 +323,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	GameObject* floor = new GameObject();
 
 	Vector3 floorSize	= Vector3(250, 0.01, 250);
-	OBBVolume* volume	= new OBBVolume(floorSize);
+	AABBVolume* volume	= new AABBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	
 	floor->GetTransform().SetScale(floorSize * 2).SetPosition(Vector3(0, -50, 0));
@@ -377,6 +387,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass); 
 	sphere->SetName(name);
+	sphere->GetPhysicsObject()->InitSphereInertia();
 
 	world->AddGameObject(sphere);
 
@@ -481,23 +492,26 @@ void TutorialGame::InitLevel1() {
 	AddCubeToWorld(Vector3(65, -4.2, 20), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_09", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
 	AddCubeToWorld(Vector3(65, -3.9, 23), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_10", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
 	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_11", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
-	
-	//AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "PullWallZ", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
-	//AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "BoostPadHX", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
-	//AddCubeToWorld(Vector3(68, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "PullWallZ", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
-
 	//section_3
-	AddCubeToWorld(Vector3(65, -3.5, 45), Vector3(3, 0.1, 5), Debug::ORANGE, "Cube_11", 0);
+	AddCubeToWorld(Vector3(65, -3.5, 45), Vector3(3, 0.1, 5), Debug::ORANGE, "Cube_12", 0);
 	AddCubeToWorld(Vector3(65, -2.5, 50), Vector3(3, 2, 0.1), Debug::DARKPURPLE, "PullWallX", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
-	AddCubeToWorld(Vector3(68, -2.5, 47), Vector3(0.1, 2, 3), Debug::DARKGREEN, "BoostPadHZ", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
-	AddCubeToWorld(Vector3(57, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_11", 0);
+	AddCubeToWorld(Vector3(68, -2.5, 47), Vector3(0.1, 2, 3), Debug::DARKGREEN, "BoostPadHX", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
+	AddCubeToWorld(Vector3(57, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_13", 0);
+
 	movingWall = AddCubeToWorld(Vector3(51, -5.5, 47), Vector3(1, 2, 3), Debug::CYAN, "BouncyWall", 0);
-	AddCubeToWorld(Vector3(45, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_11", 0);
+	movingWall->GetPhysicsObject()->SetElasticity(100.0f);
+
+	AddCubeToWorld(Vector3(45, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_14", 0);
 	
+	windMill = AddCubeToWorld(Vector3(0, 0, 0), Vector3(10, 0.1, 0.1), Debug::DARKRED, "WindMill", 0);
+
+
+
 	
-	
+	//ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
+	//ball->SetColor(Debug::DARKRED);
 	 
-	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);
+	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
 }
 
 void TutorialGame::InitLevel2() {
@@ -672,47 +686,29 @@ void TutorialGame::MoveSelectedObject() {
 
 		if (world->Raycast(ray, closestCollision, true)) {				
 			if (closestCollision.node == selectionObject){
-				if (selectionObject->GetName() == "BoostPadV") {
-					targetPos = selectionObject->GetTransform().GetPosition();
-					Vector3 currentBallPos = ball->GetTransform().GetPosition();					
-					distance = targetPos - currentBallPos;
-					if (distance.Length() < 15) {
+				
+				targetPos = selectionObject->GetTransform().GetPosition();
+				Vector3 currentBallPos = ball->GetTransform().GetPosition();
+				distance = targetPos - currentBallPos;
+				
+				if (distance.Length() < 15) {					
+					if (selectionObject->GetName() == "BoostPadV") {										
 						ball->GetPhysicsObject()->AddForce(Vector3(10, 25, 0) * forceMagnitude);
-					}					
-				}	
-
-				if (selectionObject->GetName() == "BoostPadHZ") {
-					targetPos = selectionObject->GetTransform().GetPosition();
-					Vector3 currentBallPos = ball->GetTransform().GetPosition();
-					distance = targetPos - currentBallPos;
-					if (distance.Length() < 15) {
+										
+					}
+					if (selectionObject->GetName() == "BoostPadHZ") {
 						ball->GetPhysicsObject()->AddForce(Vector3(0, 0, 25) * forceMagnitude);
+					
 					}
-				}
-
-				if (selectionObject->GetName() == "BoostPadHX") {
-					targetPos = selectionObject->GetTransform().GetPosition();
-					Vector3 currentBallPos = ball->GetTransform().GetPosition();
-					distance = targetPos - currentBallPos;
-					if (distance.Length() < 15) {
-						ball->GetPhysicsObject()->AddForce(Vector3(0, 0, 25) * forceMagnitude);
+					if (selectionObject->GetName() == "BoostPadHX") {				
+						ball->GetPhysicsObject()->AddForce(Vector3(-25, 0, 0) * forceMagnitude);
 					}
-				}
 
-				if (selectionObject->GetName() == "PullWallX") {
-					targetPos = selectionObject->GetTransform().GetPosition();
-					Vector3 currentBallPos = ball->GetTransform().GetPosition();
-					distance = targetPos - currentBallPos;
-					if (distance.Length() < 25) {
-						ball->GetPhysicsObject()->AddForce(Vector3(-10, 0, 0) * -50.0f);						
+					if (selectionObject->GetName() == "PullWallX") {
+						ball->GetPhysicsObject()->AddForce(Vector3(-10, 0, 0) * -50.0f);
 					}
-				}
 
-				if (selectionObject->GetName() == "PullWallZ") {
-					targetPos = selectionObject->GetTransform().GetPosition();
-					Vector3 currentBallPos = ball->GetTransform().GetPosition();
-					distance = targetPos - currentBallPos;
-					if (distance.Length() < 25) {
+					if (selectionObject->GetName() == "PullWallZ") {
 						ball->GetPhysicsObject()->AddForce(Vector3(0, 0, -10) * -50.0f);
 					}
 				}

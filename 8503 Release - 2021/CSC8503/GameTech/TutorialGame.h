@@ -37,6 +37,7 @@ namespace NCL {
 			void LockedObjectMovement();
 
 			void MovingWall(float dt);
+			void WindMillSpin(float dt);
 
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name,float inverseMass = 10.0f);
@@ -53,6 +54,7 @@ namespace NCL {
 			GameWorld*			world;
 			GameObject*			ball;
 			GameObject*			movingWall;
+			GameObject*			windMill;
 
 			bool useGravity;
 			bool inSelectionMode;
@@ -79,6 +81,10 @@ namespace NCL {
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;
 			}
+
+			int pass = 0;
+			Vector3 pos[2] = { Vector3(51, -0.5, 47), Vector3(51, -6.5, 47) };
+			float wallSpeed = 1.0f;
 
 		};
 	}

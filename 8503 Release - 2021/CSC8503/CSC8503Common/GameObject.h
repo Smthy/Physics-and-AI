@@ -39,7 +39,7 @@ namespace NCL {
 
 			PhysicsObject* GetPhysicsObject() const {
 				return physicsObject;
-			}
+			}			
 
 			void SetRenderObject(RenderObject* newObject) {
 				renderObject = newObject;
@@ -57,22 +57,22 @@ namespace NCL {
 				color = newColor;
 			}
 
+			const Vector4 GetColor() const {
+				return color;
+			}
+
 			const string& GetName() const {
 				return name;
 			}
 			
 			virtual void OnCollisionBegin(GameObject* otherObject) {
 				//std::cout << "OnCollisionBegin event occured!\n";
-				
-				/*
-				if (this->name == "Ball" && otherObject->name == "BoostPadV") {
-					this->GetPhysicsObject()->AddForceAtPosition(this->GetTransform().GetPosition() * 100.0f, Vector3(0, 10, 20));
+				if (this->name == "Ball" && otherObject->name == "BouncyWall") {
+					return;
+
+					//this->GetPhysicsObject()->AddForceAtPosition(otherObject->GetTransform().GetPosition() * 0.0f, this->GetTransform().GetPosition());
+					//std::cout << ray << std::endl;
 				}
-				*/
-
-
-
-
 			}
 
 			virtual void OnCollisionEnd(GameObject* otherObject) {
@@ -105,7 +105,7 @@ namespace NCL {
 			bool	isActive;
 			int		worldID;
 			string	name;
-			Vector4 color;
+			Vector4 color;			
 
 			Vector3 broadphaseAABB;
 		};
