@@ -24,6 +24,7 @@ namespace NCL {
 			void InitLevel1(); //Marble Run
 			void InitLevel2(); //Maze
 
+			
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);
 			void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
@@ -34,6 +35,8 @@ namespace NCL {
 			void MoveSelectedObject();
 			void DebugObjectMovement();
 			void LockedObjectMovement();
+
+			void MovingWall(float dt);
 
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name,float inverseMass = 10.0f);
@@ -48,7 +51,8 @@ namespace NCL {
 			GameTechRenderer*	renderer;
 			PhysicsSystem*		physics;
 			GameWorld*			world;
-			GameObject*			Ball;
+			GameObject*			ball;
+			GameObject*			movingWall;
 
 			bool useGravity;
 			bool inSelectionMode;
