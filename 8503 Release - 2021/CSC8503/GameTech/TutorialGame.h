@@ -55,6 +55,7 @@ namespace NCL {
 			GameObject*			ball;
 			GameObject*			movingWall;
 			GameObject*			windMill;
+			GameObject*			windMill_2;
 
 			bool useGravity;
 			bool inSelectionMode;

@@ -45,7 +45,7 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png"); 
+	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png"); //checkerboard.png 
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
 	InitCamera();
@@ -105,13 +105,15 @@ void TutorialGame::UpdateGame(float dt) {
 	}
 
 	MovingWall(dt);
-	WindMillSpin(dt);
 
 	world->UpdateWorld(dt);
 	renderer->Update(dt);
 
 	Debug::FlushRenderables(dt);
 	renderer->Render();
+
+	windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 5, 0));
+	windMill_2->GetPhysicsObject()->SetAngularVelocity(Vector3(0, -5, 0));
 }
 
 void TutorialGame::MovingWall(float dt) {
@@ -133,14 +135,6 @@ void TutorialGame::MovingWall(float dt) {
 	
 	Vector3 dir = distance.Normalised();	
 	movingWall->GetTransform().SetPosition(currentPos + (dir * wallSpeed * dt));
-}
-
-void TutorialGame::WindMillSpin(float dt) {
-	
-	//windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, forceMagnitude));
-
-	
-
 }
 
 void TutorialGame::UpdateKeys() {
@@ -322,11 +316,11 @@ A single function to add a large immoveable cube to the bottom of our world
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	GameObject* floor = new GameObject();
 
-	Vector3 floorSize	= Vector3(250, 0.01, 250);
+	Vector3 floorSize	= Vector3(300, 0.01, 300);
 	AABBVolume* volume	= new AABBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	
-	floor->GetTransform().SetScale(floorSize * 2).SetPosition(Vector3(0, -50, 0));
+	floor->GetTransform().SetScale(floorSize * 2).SetPosition(Vector3(0, -100, 0));
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
@@ -388,6 +382,8 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass); 
 	sphere->SetName(name);
 	sphere->GetPhysicsObject()->InitSphereInertia();
+	
+
 
 	world->AddGameObject(sphere);
 
@@ -507,17 +503,30 @@ void TutorialGame::InitLevel1() {
 	AddCubeToWorld(Vector3(31, -10.25, 47), Vector3(0.1, 3, 3), Debug::DARKGREEN, "BoostPadHX", 0);
 	AddCubeToWorld(Vector3(11, -13.25, 47), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_17", 0);	
 	AddCubeToWorld(Vector3(14, -11.25, 50), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_03", 0);
-	AddCubeToWorld(Vector3(14, -11.25, 70), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_05", 0);
+	AddCubeToWorld(Vector3(14, -13, 70), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_05", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
 	AddCubeToWorld(Vector3(-3, -11.25, 60), Vector3(0.1, 2, 10), Debug::DARKBLUE, "Wall_07", 0);
 	AddCubeToWorld(Vector3(11, -11.25, 44), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_04", 0);
-	AddCubeToWorld(Vector3(11, -11.25, 76), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_06", 0);
-	AddCubeToWorld(Vector3(-9, -11.25, 60), Vector3(0.1, 2, 16), Debug::DARKRED, "Wall_08", 0);	
-	AddCubeToWorld(Vector3(-6, -13.25, 45), Vector3(3, 0.1, 3), Debug::CYAN, "Bank_01", 0)->GetTransform().SetOrientation(Quaternion(1, 1, 0, 1.0f));
-	AddCubeToWorld(Vector3(-7, -13, 74), Vector3(3, 0.1, 3), Debug::CYAN, "Bank_02", 0)->GetTransform().SetOrientation(Quaternion(1, 1, 0, -1.0f));
-	AddCubeToWorld(Vector3(-6, -13.25, 60), Vector3(3, 0.1, 10), Debug::ORANGE, "Cube_17", 0);
-	AddCubeToWorld(Vector3(11, -13.25, 73), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_17", 0);
+	AddCubeToWorld(Vector3(11, -13, 76), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_06", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
+	AddCubeToWorld(Vector3(-9, -11.25, 60), Vector3(0.1, 2, 16), Debug::DARKRED, "Wall_08", 0);
+	AddCubeToWorld(Vector3(-6, -12, 45), Vector3(0.1, 3, 3), Debug::CYAN, "Bank_01", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), -45.0f));
+	AddCubeToWorld(Vector3(-7, -12, 74), Vector3(0.1, 3, 3), Debug::CYAN, "Bank_02", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0,1,0), 45.0f));
+	AddCubeToWorld(Vector3(-6, -13.25, 61), Vector3(3, 0.1, 15), Debug::ORANGE, "Cube_18", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -2.0f));
+	AddCubeToWorld(Vector3(11, -15, 73), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_19", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
 
-	//windMill = AddCubeToWorld(Vector3(0, 0, 0), Vector3(10, 0.1, 0.1), Debug::DARKRED, "WindMill", 0);
+	AddCubeToWorld(Vector3(69, -30, 73), Vector3(40, 0.1, 20), Debug::DARKRED, "Cube_20", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddSphereToWorld(Vector3(38, -20, 73), 2.5, "Sphere_01", 0);
+	
+	//AddCubeToWorld(Vector3(69, -30, 73), Vector3(5, 2, 0.1), Debug::DARKPURPLE, "Cube_21", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 1), -17.5f));
+	//AddCubeToWorld(Vector3(69, -30, 73), Vector3(5, 2, 0.1), Debug::DARKPURPLE, "Cube_22", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f)).SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), 17.5f));
+
+	windMill = AddCubeToWorld(Vector3(72, -30, 64), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill", 0);
+	windMill->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 17.5f));
+
+	windMill_2 = AddCubeToWorld(Vector3(64, -27.5, 80), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill_2", 0);
+	windMill_2->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 17.5f));
+	
+
+
 	ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
 	//ball->SetColor(Debug::DARKRED);
 	 
@@ -707,7 +716,7 @@ void TutorialGame::MoveSelectedObject() {
 										
 					}
 					if (selectionObject->GetName() == "BoostPadHZ") {
-						ball->GetPhysicsObject()->AddForce(Vector3(0, 0, 25) * forceMagnitude);
+						ball->GetPhysicsObject()->AddForce(Vector3(0, 0, -25) * forceMagnitude);
 					
 					}
 					if (selectionObject->GetName() == "BoostPadHX") {				
