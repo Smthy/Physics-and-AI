@@ -45,7 +45,7 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png");
+	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png"); 
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
 	InitCamera();
@@ -137,9 +137,9 @@ void TutorialGame::MovingWall(float dt) {
 
 void TutorialGame::WindMillSpin(float dt) {
 	
-	windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, forceMagnitude));
+	//windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, forceMagnitude));
 
-
+	
 
 }
 
@@ -328,7 +328,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	
 	floor->GetTransform().SetScale(floorSize * 2).SetPosition(Vector3(0, -50, 0));
 
-	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, NULL, basicShader));
+	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 
 	floor->GetPhysicsObject()->SetInverseMass(0);
@@ -494,7 +494,7 @@ void TutorialGame::InitLevel1() {
 	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_11", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
 	//section_3
 	AddCubeToWorld(Vector3(65, -3.5, 45), Vector3(3, 0.1, 5), Debug::ORANGE, "Cube_12", 0);
-	AddCubeToWorld(Vector3(65, -2.5, 50), Vector3(3, 2, 0.1), Debug::DARKPURPLE, "PullWallX", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
+	AddCubeToWorld(Vector3(65, 5, 50), Vector3(3, 10.5, 0.1), Debug::DARKPURPLE, "PullWallZ", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
 	AddCubeToWorld(Vector3(68, -2.5, 47), Vector3(0.1, 2, 3), Debug::DARKGREEN, "BoostPadHX", 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
 	AddCubeToWorld(Vector3(57, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_13", 0);
 
@@ -502,16 +502,26 @@ void TutorialGame::InitLevel1() {
 	movingWall->GetPhysicsObject()->SetElasticity(100.0f);
 
 	AddCubeToWorld(Vector3(45, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_14", 0);
-	
-	windMill = AddCubeToWorld(Vector3(0, 0, 0), Vector3(10, 0.1, 0.1), Debug::DARKRED, "WindMill", 0);
+	AddCubeToWorld(Vector3(35.5, -5.415, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_15", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 5.0f));	
+	AddCubeToWorld(Vector3(24, -4, 47), Vector3(0.1, 3, 3), Debug::ORANGE, "Cube_16", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -7.5f));
+	AddCubeToWorld(Vector3(31, -10.25, 47), Vector3(0.1, 3, 3), Debug::DARKGREEN, "BoostPadHX", 0);
+	AddCubeToWorld(Vector3(11, -13.25, 47), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_17", 0);	
+	AddCubeToWorld(Vector3(14, -11.25, 50), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_03", 0);
+	AddCubeToWorld(Vector3(14, -11.25, 70), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_05", 0);
+	AddCubeToWorld(Vector3(-3, -11.25, 60), Vector3(0.1, 2, 10), Debug::DARKBLUE, "Wall_07", 0);
+	AddCubeToWorld(Vector3(11, -11.25, 44), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_04", 0);
+	AddCubeToWorld(Vector3(11, -11.25, 76), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_06", 0);
+	AddCubeToWorld(Vector3(-9, -11.25, 60), Vector3(0.1, 2, 16), Debug::DARKRED, "Wall_08", 0);	
+	AddCubeToWorld(Vector3(-6, -13.25, 45), Vector3(3, 0.1, 3), Debug::CYAN, "Bank_01", 0)->GetTransform().SetOrientation(Quaternion(1, 1, 0, 1.0f));
+	AddCubeToWorld(Vector3(-7, -13, 74), Vector3(3, 0.1, 3), Debug::CYAN, "Bank_02", 0)->GetTransform().SetOrientation(Quaternion(1, 1, 0, -1.0f));
+	AddCubeToWorld(Vector3(-6, -13.25, 60), Vector3(3, 0.1, 10), Debug::ORANGE, "Cube_17", 0);
+	AddCubeToWorld(Vector3(11, -13.25, 73), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_17", 0);
 
-
-
-	
-	//ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
+	//windMill = AddCubeToWorld(Vector3(0, 0, 0), Vector3(10, 0.1, 0.1), Debug::DARKRED, "WindMill", 0);
+	ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
 	//ball->SetColor(Debug::DARKRED);
 	 
-	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
+	//ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
 }
 
 void TutorialGame::InitLevel2() {
