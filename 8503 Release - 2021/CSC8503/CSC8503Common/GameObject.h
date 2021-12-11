@@ -67,11 +67,13 @@ namespace NCL {
 			
 			virtual void OnCollisionBegin(GameObject* otherObject) {
 				//std::cout << "OnCollisionBegin event occured!\n";
-				if (this->name == "Ball" && otherObject->name == "BouncyWall") {
+				if (this->name == "Ball" && otherObject->name == "Cube_21") {
+					
+					std::cout << "END GAME" << std::endl;
 					return;
 
-					//this->GetPhysicsObject()->AddForceAtPosition(otherObject->GetTransform().GetPosition() * 0.0f, this->GetTransform().GetPosition());
-					//std::cout << ray << std::endl;
+					//EndGame
+					
 				}
 			}
 

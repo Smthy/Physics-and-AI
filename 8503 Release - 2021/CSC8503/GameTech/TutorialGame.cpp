@@ -45,7 +45,7 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png"); //checkerboard.png 
+	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("doge.png"); //checkerboard.png 
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
 	InitCamera();
@@ -101,7 +101,8 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->SetPitch(angles.x);
 		world->GetMainCamera()->SetYaw(angles.y);
 
-		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);		
+		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);	
+			
 	}
 
 	MovingWall(dt);
@@ -114,6 +115,8 @@ void TutorialGame::UpdateGame(float dt) {
 
 	windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 5, 0));
 	windMill_2->GetPhysicsObject()->SetAngularVelocity(Vector3(0, -5, 0));
+
+	//std::cout << world->GetMainCamera()->GetPosition() << std::endl;
 }
 
 void TutorialGame::MovingWall(float dt) {
@@ -513,24 +516,28 @@ void TutorialGame::InitLevel1() {
 	AddCubeToWorld(Vector3(-6, -13.25, 61), Vector3(3, 0.1, 15), Debug::ORANGE, "Cube_18", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -2.0f));
 	AddCubeToWorld(Vector3(11, -15, 73), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_19", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
 
-	AddCubeToWorld(Vector3(69, -30, 73), Vector3(40, 0.1, 20), Debug::DARKRED, "Cube_20", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
-	AddSphereToWorld(Vector3(38, -20, 73), 2.5, "Sphere_01", 0);
-	
-	//AddCubeToWorld(Vector3(69, -30, 73), Vector3(5, 2, 0.1), Debug::DARKPURPLE, "Cube_21", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 1), -17.5f));
-	//AddCubeToWorld(Vector3(69, -30, 73), Vector3(5, 2, 0.1), Debug::DARKPURPLE, "Cube_22", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f)).SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), 17.5f));
+	AddCubeToWorld(Vector3(69, -30, 73), Vector3(40, 0.1, 20), Debug::ORANGE, "Cube_20", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddCubeToWorld(Vector3(69, -28, 53), Vector3(40, 3, 0.1), Debug::DARKRED, "Cube_20", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddCubeToWorld(Vector3(69, -28, 93), Vector3(40, 3, 0.1), Debug::DARKRED, "Cube_20", 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddSphereToWorld(Vector3(38, -20, 73), 2.5, "Sphere_01", 0);	
 
 	windMill = AddCubeToWorld(Vector3(72, -30, 64), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill", 0);
 	windMill->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 17.5f));
-
 	windMill_2 = AddCubeToWorld(Vector3(64, -27.5, 80), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill_2", 0);
 	windMill_2->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 17.5f));
-	
+
+	AddSphereToWorld(Vector3(100, -40, 89), 1.5, "Sphere_02", 0);
+	AddSphereToWorld(Vector3(100, -40, 66), 1.5, "Sphere_03", 0);
 
 
-	ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
+	AddCubeToWorld(Vector3(110, -50, 88), Vector3(5, 0.1, 15), Debug::CYAN, "Cube_21", 0);// Win Condition
+	AddCubeToWorld(Vector3(110, -50, 58), Vector3(5, 0.1, 15), Debug::BLACK, "Cube_22", 0);//Restart Condition
+
+	   	  
+	//ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
 	//ball->SetColor(Debug::DARKRED);
 	 
-	//ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
+	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
 }
 
 void TutorialGame::InitLevel2() {

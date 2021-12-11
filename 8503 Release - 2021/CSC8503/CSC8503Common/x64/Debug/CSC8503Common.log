@@ -1,2 +1,9 @@
 ﻿  CollisionDetection.cpp
+  GameObject.cpp
+  GameWorld.cpp
+  PhysicsObject.cpp
+  PhysicsSystem.cpp
+  PositionConstraint.cpp
+  QuadTree.cpp
+  Generating Code...
   CSC8503Common.vcxproj -> H:\GitHub\Physics-and-AI\8503 Release - 2021\x64\Debug\CSC8503Common.lib
