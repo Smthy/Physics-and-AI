@@ -1,5 +1,6 @@
 #pragma once
 #include "GameTechRenderer.h"
+#include "../CSC8503Common/StateGameObject.h"
 #include "../CSC8503Common/PhysicsSystem.h"
 
 namespace NCL {
@@ -86,6 +87,9 @@ namespace NCL {
 			int pass = 0;
 			Vector3 pos[2] = { Vector3(51, -0.5, 47), Vector3(51, -6.5, 47) };
 			float wallSpeed = 1.0f;
+
+			StateGameObject* AddStateObjectToWorld(const Vector3& position);
+			StateGameObject* testStateObject = nullptr;
 
 		};
 	}

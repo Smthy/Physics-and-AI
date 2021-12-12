@@ -116,6 +116,10 @@ void TutorialGame::UpdateGame(float dt) {
 	windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 5, 0));
 	windMill_2->GetPhysicsObject()->SetAngularVelocity(Vector3(0, -5, 0));
 
+	if (testStateObject) {
+		testStateObject->Update(dt);
+	}
+
 	//std::cout << world->GetMainCamera()->GetPosition() << std::endl;
 }
 
@@ -278,7 +282,9 @@ void TutorialGame::InitWorld() {
 	//InitSphereOnly();
 	//BridgeConstraintTest();
 
-	InitLevel1();	
+	//InitLevel1();	
+
+	InitLevel2();
 
 	InitDefaultFloor();
 	
@@ -741,4 +747,10 @@ void TutorialGame::MoveSelectedObject() {
 			}
 		}
 	}
+}
+
+// ----- AI -----
+
+void TutorialGame::AddStateObjectToWorld() {
+	testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
 }
