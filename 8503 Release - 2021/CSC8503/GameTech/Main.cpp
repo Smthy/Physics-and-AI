@@ -3,15 +3,18 @@
 #include "../CSC8503Common/StateMachine.h"
 #include "../CSC8503Common/StateTransition.h"
 #include "../CSC8503Common/State.h"
-
 #include "../CSC8503Common/NavigationGrid.h"
 
 #include "TutorialGame.h"
 
 using namespace NCL;
 using namespace CSC8503;
-
-
+/*
+__________
+AI Section
+__________
+*/
+vector<Vector3> testNodes;
 void TestStateMachine() {
 	StateMachine* testMachine = new StateMachine();
 	int data = 0;
@@ -32,13 +35,13 @@ void TestStateMachine() {
 
 	StateTransition* stateAB = new StateTransition(A, B, [&](void)->bool
 		{
-		return data > 10;
+			return data > 10;
 		}
 	);
 
-	StateTransition * stateBA = new StateTransition(B, A, [&](void)->bool
+	StateTransition* stateBA = new StateTransition(B, A, [&](void)->bool
 		{
-		return data < 0;
+			return data < 0;
 		}
 	);
 
@@ -46,12 +49,33 @@ void TestStateMachine() {
 	testMachine->AddState(B);
 	testMachine->AddTransition(stateAB);
 	testMachine->AddTransition(stateBA);
-	
+
 	for (int i = 0; i < 100; ++i) {
 		testMachine->Update(1.0f);
 	}
 }
+void TestPathfinding() {
+	NavigationGrid grid("TestGrid1.txt");
+	NavigationPath outPath;
 
+	Vector3 startPos(80, 0, 10);
+	Vector3 endPos(80, 0, 80);
+
+	bool found = grid.FindPath(startPos, endPos, outPath);
+	Vector3 pos;
+	while (outPath.PopWaypoint(pos)) {
+		testNodes.push_back(pos);
+	}
+}
+
+void DisplayPathfinding() {
+	for (int i = 1; i < testNodes.size(); ++i) {
+		Vector3 a = testNodes[i -1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a, b, Debug::CYAN);
+	}
+}
 
 
 /*
@@ -78,6 +102,7 @@ int main() {
 
 	TutorialGame* g = new TutorialGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
+	TestPathfinding();
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		if (dt > 0.1f) {
@@ -96,7 +121,7 @@ int main() {
 		}
 
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
-
+		DisplayPathfinding();
 		g->UpdateGame(dt);
 
 		

@@ -5,11 +5,9 @@ namespace NCL {
 	namespace CSC8503 {
 		struct GridNode {
 			GridNode* parent;
-
 			GridNode* connected[4];
-			int		  costs[4];
-
-			Vector3		position;
+			int costs[4];
+			Vector3 position;
 
 			float f;
 			float g;
@@ -38,9 +36,9 @@ namespace NCL {
 			bool FindPath(const Vector3& from, const Vector3& to, NavigationPath& outPath) override;
 				
 		protected:
-			bool		NodeInList(GridNode* n, std::vector<GridNode*>& list) const;
-			GridNode*	RemoveBestNode(std::vector<GridNode*>& list) const;
-			float		Heuristic(GridNode* hNode, GridNode* endNode) const;
+			bool NodeInList(GridNode* n, std::vector<GridNode*>& list) const;
+			GridNode* RemoveBestNode(std::vector<GridNode*>& list) const;
+			float Heuristic(GridNode* hNode, GridNode* endNode) const;
 			int nodeSize;
 			int gridWidth;
 			int gridHeight;

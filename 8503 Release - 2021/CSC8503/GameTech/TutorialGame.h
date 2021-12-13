@@ -43,12 +43,14 @@ namespace NCL {
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name,float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name,float inverseMass = 10.0f);
-			
+			GameObject* AddAABBCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float inverseMass = 10.0f);
+
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
 			GameObject* AddPlayerToWorld(const Vector3& position);
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
+			StateGameObject* AddStateObjectToWorld(const Vector3& position);			
 
 			GameTechRenderer*	renderer;
 			PhysicsSystem*		physics;
@@ -57,6 +59,7 @@ namespace NCL {
 			GameObject*			movingWall;
 			GameObject*			windMill;
 			GameObject*			windMill_2;
+			StateGameObject* testStateObject;
 
 			bool useGravity;
 			bool inSelectionMode;
@@ -64,6 +67,7 @@ namespace NCL {
 			float		forceMagnitude;
 
 			GameObject* selectionObject = nullptr;
+			
 
 			OGLMesh*	capsuleMesh = nullptr;
 			OGLMesh*	cubeMesh	= nullptr;
@@ -80,17 +84,14 @@ namespace NCL {
 			//Coursework Additional functionality	
 			GameObject* lockedObject	= nullptr;
 			Vector3 lockedOffset		= Vector3(0, 14, 20);
+
 			void LockCameraToObject(GameObject* o) {
 				lockedObject = o;
-			}
+			}		
 
 			int pass = 0;
 			Vector3 pos[2] = { Vector3(51, -0.5, 47), Vector3(51, -6.5, 47) };
-			float wallSpeed = 1.0f;
-
-			StateGameObject* AddStateObjectToWorld(const Vector3& position);
-			StateGameObject* testStateObject = nullptr;
-
+			float wallSpeed = 1.0f;		
 		};
 	}
 }

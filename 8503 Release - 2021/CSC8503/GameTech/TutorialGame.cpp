@@ -5,6 +5,9 @@
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
+#include "../CSC8503Common/StateMachine.h"
+#include "../CSC8503Common/StateTransition.h"
+#include "../CSC8503Common/State.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -45,7 +48,7 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("doge.png"); //checkerboard.png 
+	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png"); //checkerboard.png 
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
 	InitCamera();
@@ -101,8 +104,7 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->SetPitch(angles.x);
 		world->GetMainCamera()->SetYaw(angles.y);
 
-		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);	
-			
+		//Debug::DrawAxisLines(lockedObject->GetTransform().GetMatrix(), 2.0f);				
 	}
 
 	MovingWall(dt);
@@ -113,8 +115,11 @@ void TutorialGame::UpdateGame(float dt) {
 	Debug::FlushRenderables(dt);
 	renderer->Render();
 
-	windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 5, 0));
-	windMill_2->GetPhysicsObject()->SetAngularVelocity(Vector3(0, -5, 0));
+	if (windMill != NULL && windMill_2 != NULL) {
+		windMill->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 5, 0));
+		windMill_2->GetPhysicsObject()->SetAngularVelocity(Vector3(0, -5, 0));
+	}
+	
 
 	if (testStateObject) {
 		testStateObject->Update(dt);
@@ -124,7 +129,9 @@ void TutorialGame::UpdateGame(float dt) {
 }
 
 void TutorialGame::MovingWall(float dt) {
-
+	if (movingWall == NULL) {
+		return;
+	}
 	Vector3 currentPos = movingWall->GetTransform().GetPosition();	
 	Vector3 distance;
 	Vector3 target = pos[pass];
@@ -277,16 +284,17 @@ void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
 
+	//InitLevel2();
+
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
-	//InitSphereOnly();
+	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
 	//BridgeConstraintTest();
 
 	//InitLevel1();	
 
-	InitLevel2();
+	AddFloorToWorld(Vector3(0, -2, 0));
 
-	InitDefaultFloor();
 	
 }
 
@@ -329,7 +337,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	AABBVolume* volume	= new AABBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	
-	floor->GetTransform().SetScale(floorSize * 2).SetPosition(Vector3(0, -100, 0));
+	
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
@@ -337,12 +345,15 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
+
 	world->AddGameObject(floor);
+
+	floor->GetTransform().SetScale(floorSize * 2).SetPosition(position);
 
 	return floor;
 }
 
-GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 color, string name,float inverseMass) {
+GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 color, string name, float inverseMass) {
 	GameObject* cube = new GameObject();
 
 	OBBVolume* volume = new OBBVolume(dimensions);
@@ -351,7 +362,32 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 	cube->GetTransform()
 		.SetPosition(position)
 		.SetScale(dimensions * 2);
-	
+
+
+	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
+	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
+
+	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
+	cube->GetPhysicsObject()->InitCubeInertia();
+
+	cube->SetName(name);
+	cube->GetRenderObject()->SetColour(color);
+
+	world->AddGameObject(cube);
+
+	return cube;
+}
+
+GameObject* TutorialGame::AddAABBCubeToWorld(const Vector3 & position, Vector3 dimensions, Vector4 color, string name, float inverseMass) {
+	GameObject* cube = new GameObject();
+
+	AABBVolume* volume = new AABBVolume(dimensions);
+	cube->SetBoundingVolume((CollisionVolume*)volume);
+
+	cube->GetTransform()
+		.SetPosition(position)
+		.SetScale(dimensions * 2);
+
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
@@ -544,10 +580,14 @@ void TutorialGame::InitLevel1() {
 	//ball->SetColor(Debug::DARKRED);
 	 
 	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
+	
+	AddFloorToWorld(Vector3(0, -100, 0));
 }
 
 void TutorialGame::InitLevel2() {
 	
+	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
+	//AddFloorToWorld(Vector3(0, 0, 0));
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
@@ -602,6 +642,7 @@ GameObject* TutorialGame::AddEnemyToWorld(const Vector3& position) {
 
 	return character;
 }
+
 GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	GameObject* apple = new GameObject();
 
@@ -620,6 +661,27 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	world->AddGameObject(apple);
 
 	return apple;
+}
+
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position) {
+	
+	StateGameObject* coin = new StateGameObject();
+
+	SphereVolume* volume = new SphereVolume(0.25f);
+	coin->SetBoundingVolume((CollisionVolume*)volume);
+	coin->GetTransform()
+		.SetScale(Vector3(0.25, 0.25, 0.25))
+		.SetPosition(position);
+
+	coin->SetRenderObject(new RenderObject(&coin->GetTransform(), bonusMesh, nullptr, basicShader));
+	coin->SetPhysicsObject(new PhysicsObject(&coin->GetTransform(), coin->GetBoundingVolume()));
+
+	coin->GetPhysicsObject()->SetInverseMass(1.0f);
+	coin->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(coin);
+
+	return coin;
 }
 /*
 
@@ -750,7 +812,3 @@ void TutorialGame::MoveSelectedObject() {
 }
 
 // ----- AI -----
-
-void TutorialGame::AddStateObjectToWorld() {
-	testStateObject = AddStateObjectToWorld(Vector3(0, 10, 0));
-}
