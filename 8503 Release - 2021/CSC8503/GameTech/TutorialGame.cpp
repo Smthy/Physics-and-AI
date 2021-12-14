@@ -1,3 +1,6 @@
+#include <iostream>
+#include <utility>
+
 #include "TutorialGame.h"
 #include "../CSC8503Common/PositionConstraint.h"
 #include "../CSC8503Common/GameWorld.h"
@@ -5,9 +8,15 @@
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
+
 #include "../CSC8503Common/StateMachine.h"
 #include "../CSC8503Common/StateTransition.h"
 #include "../CSC8503Common/State.h"
+#include "../CSC8503Common/NavigationGrid.h"
+#include "../CSC8503Common/BehaviourAction.h"
+#include "../CSC8503Common/BehaviourSequence.h"
+#include "../CSC8503Common/BehaviourSelector.h"
+
 
 using namespace NCL;
 using namespace CSC8503;
@@ -53,6 +62,11 @@ void TutorialGame::InitialiseAssets() {
 
 	InitCamera();
 	InitWorld();
+
+	TestPathfinding();
+	DisplayPathfinding();
+	TestStateMachine();
+	
 }
 
 TutorialGame::~TutorialGame()	{
@@ -72,18 +86,35 @@ TutorialGame::~TutorialGame()	{
 }
 
 void TutorialGame::UpdateGame(float dt) {
+	
+	//TestBehaviourTree();
+
+	if (!mainMenuActive) {
+		if (useGravity) {
+			Debug::Print("(G)ravity on", Vector2(5, 95), Debug::WHITE);
+		}
+		else {
+			Debug::Print("(G)ravity off", Vector2(5, 95), Debug::WHITE);
+		}
+		renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
+		renderer->DrawString("Click Force " + std::to_string(forceMagnitude), Vector2(10, 20));
+		
+	}
+	else if (mainMenuActive) {
+		renderer->DrawString("Physics and AI", Vector2(25, 30), Debug::DARKBLUE, 50.0f);
+		renderer->DrawString("Physcis Level 1", Vector2(10, 45), Debug::DARKGREEN, 35.0f);
+		renderer->DrawString("AI Level 2", Vector2(10, 55), Debug::DARKGREEN, 35.0f);
+		renderer->DrawString("Exit", Vector2(10, 65), Debug::DARKRED, 35.0f);
+	}
+	
+
 	if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}
 
 	UpdateKeys();
 
-	if (useGravity) {
-		Debug::Print("(G)ravity on", Vector2(5, 95));
-	}
-	else {
-		Debug::Print("(G)ravity off", Vector2(5, 95));
-	}
+	
 
 	SelectObject();
 	MoveSelectedObject();
@@ -124,6 +155,16 @@ void TutorialGame::UpdateGame(float dt) {
 	if (testStateObject) {
 		testStateObject->Update(dt);
 	}
+
+
+	/*if (InitLevel2)
+	{
+		return;
+	}
+	else {
+		DisplayPathfinding();
+	}*/
+	
 
 	//std::cout << world->GetMainCamera()->GetPosition() << std::endl;
 }
@@ -280,10 +321,20 @@ void TutorialGame::InitCamera() {
 	lockedObject = nullptr;
 }
 
+void PushdownAutomata() {
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM3)){
+		
+	}
+}
+
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
-
+	
+	
+	
+	InitMainMenu();
+	//InitLevel1();
 	//InitLevel2();
 
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
@@ -291,10 +342,10 @@ void TutorialGame::InitWorld() {
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
 	//BridgeConstraintTest();
 
-	//InitLevel1();	
+		
 
-	AddFloorToWorld(Vector3(0, -2, 0));
-
+	//AddFloorToWorld(Vector3(0, -2, 0));
+	//DisplayPathfinding();
 	
 }
 
@@ -333,7 +384,7 @@ A single function to add a large immoveable cube to the bottom of our world
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	GameObject* floor = new GameObject();
 
-	Vector3 floorSize	= Vector3(300, 0.01, 300);
+	Vector3 floorSize	= Vector3(500, 0.01, 500);
 	AABBVolume* volume	= new AABBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	
@@ -506,8 +557,14 @@ void TutorialGame::InitGameExamples() {
 	AddBonusToWorld(Vector3(10, 5, 0));
 }
 
-void TutorialGame::InitLevel1() {
+void TutorialGame::InitMainMenu() {	
+	mainMenuActive = true;
 
+	
+}
+
+void TutorialGame::InitLevel1() {
+	mainMenuActive = false;
 	//Section_1
 	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Debug::ORANGE, "Cube_01" ,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -5.0f));
 	AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3),  Debug::ORANGE, "Cube_02", 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
@@ -584,10 +641,42 @@ void TutorialGame::InitLevel1() {
 	AddFloorToWorld(Vector3(0, -100, 0));
 }
 
+void TutorialGame::MazeLoader(const string& file) {
+	
+}
+
 void TutorialGame::InitLevel2() {
+	mainMenuActive = false;
+	vector<Vector3> testNodes;
+	ball = AddSphereToWorld(Vector3(180, 0, 180), 1.0f, "Ball", 1.0f);
+	bAI = AddSphereToWorld(Vector3(20, 0, 20), 1.0f, "BTai", 1.0f);
+
+	NavigationGrid grid("TestGrid1.txt");
+	NavigationPath outPath;
+
+	Vector3 startPos = ball->GetTransform().GetPosition();
+	Vector3 endPos = bAI->GetTransform().GetPosition();
+	bool found = grid.FindPath(startPos, endPos, outPath);
+
+	std::cout << grid.FindPath(startPos, endPos, outPath) << std::endl;
+
+
+
+	
+	Vector3 pos;
+	while (outPath.PopWaypoint(pos)) {
+		testNodes.push_back(pos);
+	}
+
+	for (int i = 1; i < testNodes.size(); ++i) {
+		Vector3 a = testNodes[i - 1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a, b, Debug::DARKGREEN);
+	}
 	
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
-	//AddFloorToWorld(Vector3(0, 0, 0));
+	AddFloorToWorld(Vector3(0, -2, 0));
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
@@ -706,7 +795,7 @@ bool TutorialGame::SelectObject() {
 	}
 	if (inSelectionMode) {
 
-		renderer->DrawString("Press Q to change to camera mode!", Vector2(5, 85));
+		
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			
 			if (selectionObject) {	//set colour to deselected;
@@ -767,9 +856,9 @@ line - after the third, they'll be able to twist under torque aswell.
 void TutorialGame::MoveSelectedObject() {	
 	Vector3 distance;
 	Vector3 targetPos;
-	renderer->DrawString("Click Force " + std::to_string(forceMagnitude), Vector2(10, 20));
+	Vector3 currentBallPos;
+	
 	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 5.0f;
-
 	if (!selectionObject) {
 		return;
 	}
@@ -782,7 +871,7 @@ void TutorialGame::MoveSelectedObject() {
 			if (closestCollision.node == selectionObject){
 				
 				targetPos = selectionObject->GetTransform().GetPosition();
-				Vector3 currentBallPos = ball->GetTransform().GetPosition();
+				currentBallPos = ball->GetTransform().GetPosition();
 				distance = targetPos - currentBallPos;
 				
 				if (distance.Length() < 15) {					
@@ -812,3 +901,182 @@ void TutorialGame::MoveSelectedObject() {
 }
 
 // ----- AI -----
+vector<Vector3> testNodes;
+void TutorialGame::TestStateMachine() {
+	StateMachine* testMachine = new StateMachine();
+	int data = 0;
+
+	State* A = new State([&](float dt)->void
+		{
+			std::cout << "I'm in state!\n";
+			data++;
+		}
+	);
+
+	State* B = new State([&](float dt)->void
+		{
+			std::cout << "I'm in state!\n";
+			data--;
+		}
+	);
+
+	StateTransition* stateAB = new StateTransition(A, B, [&](void)->bool
+		{
+			return data > 10;
+		}
+	);
+
+	StateTransition* stateBA = new StateTransition(B, A, [&](void)->bool
+		{
+			return data < 0;
+		}
+	);
+
+	testMachine->AddState(A);
+	testMachine->AddState(B);
+	testMachine->AddTransition(stateAB);
+	testMachine->AddTransition(stateBA);
+
+	for (int i = 0; i < 100; ++i) {
+		testMachine->Update(1.0f);
+	}
+}
+
+void TutorialGame::TestPathfinding() {
+	NavigationGrid grid("TestGrid1.txt");
+	NavigationPath outPath;
+
+	Vector3 startPos(80, 0, 10);
+	Vector3 endPos(80, 0, 80);
+
+	bool found = grid.FindPath(startPos, endPos, outPath);
+	Vector3 pos;
+	while (outPath.PopWaypoint(pos)) {
+		testNodes.push_back(pos);
+	}
+}
+
+void TutorialGame::DisplayPathfinding() {
+	for (int i = 1; i < testNodes.size(); ++i) {
+		Vector3 a = testNodes[i - 1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a, b, Debug::CYAN);
+	}
+}
+void TutorialGame::TestBehaviourTree() {
+	float behaviourTimer;
+	float distanceToTarget;
+	BehaviourAction* findKey = new BehaviourAction("Find Key", [&](float dt, BehaviourState state)->BehaviourState {
+		if (state == Initialise) {
+			std::cout << "Looking for Key!\n";
+			behaviourTimer = rand() % 100;
+			state = Ongoing;
+		}
+		else if (state == Ongoing) {
+			behaviourTimer -= dt;
+			if (behaviourTimer <= 0.0f) {
+				std::cout << "Found a key\n";
+				return Success;
+			}
+		}
+		return state;
+		}
+	);
+
+	BehaviourAction* goToRoom = new BehaviourAction("Go To Room", [&](float dt, BehaviourState state)->BehaviourState {
+		if (state == Initialise) {
+			std::cout << "Going into the loot room! \n";
+			state = Ongoing;
+		}
+		else if (state == Ongoing) {
+			distanceToTarget -= dt;
+			if (distanceToTarget <= 0.0f) {
+				std::cout << "Reached Room! \n";
+				return Success;
+			}
+		}
+		return state;
+		}
+	);
+
+	BehaviourAction* openDoor = new BehaviourAction("Open Door", [&](float dt, BehaviourState state)->BehaviourState {
+		if (state == Initialise) {
+			std::cout << "Opening Door!\n";
+			return Success;
+		}
+		return state;
+		}
+	);
+
+	BehaviourAction* lookForTreasure = new BehaviourAction("Look for Treasure", [&](float dt, BehaviourState state)->BehaviourState {
+		if (state == Initialise) {
+			std::cout << "Looking for Treasure!\n";
+			return Ongoing;
+		}
+		else if (state == Ongoing) {
+			bool found = rand() % 2;
+			if (found) {
+				std::cout << "I found some treasure!\n";
+				return Success;
+			}
+			std::cout << "No treasure in here...\n";
+			return Failure;
+		}
+		return state;
+		}
+	);
+
+	BehaviourAction* lookForItems = new BehaviourAction("Look for Items", [&](float dt, BehaviourState state)->BehaviourState {
+		if (state == Initialise) {
+			std::cout << "Looking for Items!\n";
+			return Ongoing;
+		}
+		else if (state == Ongoing) {
+			bool found = rand() % 2;
+			if (found) {
+				std::cout << "I found some items!\n";
+				return Success;
+			}
+			std::cout << "No items in here...\n";
+			return Failure;
+		}
+		return state;
+		}
+	);
+
+	BehaviourSequence* sequence =
+		new BehaviourSequence("Room Sequence");
+	sequence->AddChild(findKey);
+	sequence->AddChild(goToRoom);
+	sequence->AddChild(openDoor);
+
+	BehaviourSelector* selection =
+		new BehaviourSelector("Loot Selection");
+	selection->AddChild(lookForTreasure);
+	selection->AddChild(lookForItems);
+
+	BehaviourSequence* rootSequence =
+		new BehaviourSequence("Root Sequence");
+	rootSequence->AddChild(sequence);
+	rootSequence->AddChild(selection);
+
+	for (int i = 0; i < 5; ++i)
+	{
+		rootSequence->Reset();
+		behaviourTimer = 0.0f;
+		distanceToTarget = rand() % 250;
+		BehaviourState state = Ongoing;
+		std::cout << "We're going on an adventure!\n";
+		while (state == Ongoing) {
+			state = rootSequence->Execute(1.0f);
+		}
+		if (state == Success) {
+			std::cout << "What a successful adventure!\n";
+		}
+		else if (state == Failure) {
+			std::cout << "What a waste of time!\n";
+		}
+	}
+	std::cout << "All Done!\n";
+}

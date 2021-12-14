@@ -26,22 +26,23 @@ const Vector4 Debug::DARKRED = Vector4(0.58, 0.02, 0.02, 1);
 const Vector4 Debug::TURQUOISE = Vector4(0.02, 0.58, 0.47, 1);
 
 
-void Debug::Print(const std::string& text, const Vector2&pos, const Vector4& colour) {
+void Debug::Print(const std::string& text, const Vector2&pos, const Vector4& color) {
+	
 	DebugStringEntry newEntry;
 
 	newEntry.data		= text;
 	newEntry.position	= pos;
-	newEntry.colour		= colour;
+	newEntry.color		= color;
 
 	stringEntries.emplace_back(newEntry);
 }
 
-void Debug::DrawLine(const Vector3& startpoint, const Vector3& endpoint, const Vector4& colour, float time) {
+void Debug::DrawLine(const Vector3& startpoint, const Vector3& endpoint, const Vector4& color, float time) {
 	DebugLineEntry newEntry;
 
 	newEntry.start	= startpoint;
 	newEntry.end	= endpoint;
-	newEntry.colour = colour;
+	newEntry.color = color;
 	newEntry.time	= time;
 
 	lineEntries.emplace_back(newEntry);
@@ -73,7 +74,7 @@ void Debug::FlushRenderables(float dt) {
 	int trim = 0;
 	for (int i = 0; i < lineEntries.size(); ) {
 		DebugLineEntry* e = &lineEntries[i]; 
-		renderer->DrawLine(e->start, e->end, e->colour);
+		renderer->DrawLine(e->start, e->end, e->color);
 		e->time -= dt;
 		if (e->time < 0) {			
 			trim++;				
