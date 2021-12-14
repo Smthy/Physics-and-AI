@@ -333,9 +333,9 @@ void TutorialGame::InitWorld() {
 	
 	
 	
-	InitMainMenu();
+	//InitMainMenu();
 	//InitLevel1();
-	//InitLevel2();
+	InitLevel2();
 
 	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
 	//InitGameExamples();
@@ -671,7 +671,7 @@ void TutorialGame::InitLevel2() {
 	}
 	
 	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
-	AddFloorToWorld(Vector3(0, -2, 0));
+	AddFloorToWorld(Vector3(0, 0, 0));
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
@@ -953,6 +953,7 @@ void TutorialGame::TestPathfinding() {
 		testNodes.push_back(pos);
 	}
 }
+
 
 void TutorialGame::DisplayPathfinding() {
 	for (int i = 1; i < testNodes.size(); ++i) {

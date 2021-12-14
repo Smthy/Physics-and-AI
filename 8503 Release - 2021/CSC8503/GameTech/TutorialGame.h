@@ -38,6 +38,7 @@ namespace NCL {
 			void BridgeConstraintTest();
 			void InitLevel1(); //Marble Run
 			void InitLevel2(); //Maze
+			void AIMovement();
 	
 			bool SelectObject();
 			void MoveSelectedObject();
