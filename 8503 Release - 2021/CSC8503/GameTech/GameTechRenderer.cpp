@@ -59,12 +59,19 @@ GameTechRenderer::~GameTechRenderer()	{
 
 void GameTechRenderer::LoadSkybox() {
 	string filenames[6] = {
-		"/Cubemap/skyrender0004.png",
+		"Doge.png",
+		"Doge.png",
+		"Doge.png",
+		"Doge.png",
+		"Doge.png",
+		"Doge.png"
+		
+		/*"/Cubemap/skyrender0004.png",
 		"/Cubemap/skyrender0001.png",
 		"/Cubemap/skyrender0003.png",
 		"/Cubemap/skyrender0006.png",
 		"/Cubemap/skyrender0002.png",
-		"/Cubemap/skyrender0005.png"
+		"/Cubemap/skyrender0005.png"*/
 	};
 
 	int width[6]	= { 0 };

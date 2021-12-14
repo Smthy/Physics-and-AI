@@ -157,7 +157,7 @@ namespace NCL {
 				pauseReminder -= dt;
 				if (pauseReminder < 0) {
 					
-					game;
+					//game;
 
 					pauseReminder += 1.0f;
 				}
@@ -242,9 +242,9 @@ namespace NCL {
 			}
 		};
 		
-		void PushdownAutomata() {
+		/*void PushdownAutomata() {
 			PushdownMachine machine(new IntroScreen());			
-		}
+		}*/
 		
 		
 	}

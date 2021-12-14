@@ -101,7 +101,7 @@ void TutorialGame::UpdateGame(float dt) {
 		
 	}
 	else if (mainMenuActive) {
-		renderer->DrawString("Physics and AI", Vector2(25, 30), Debug::DARKBLUE, 50.0f);
+		renderer->DrawString("Physics and AI", Vector2(25, 30), Debug::MAGENTA, 50.0f);
 		renderer->DrawString("Physcis Level 1", Vector2(10, 45), Debug::DARKGREEN, 35.0f);
 		renderer->DrawString("AI Level 2", Vector2(10, 55), Debug::DARKGREEN, 35.0f);
 		renderer->DrawString("Exit", Vector2(10, 65), Debug::DARKRED, 35.0f);
@@ -321,11 +321,11 @@ void TutorialGame::InitCamera() {
 	lockedObject = nullptr;
 }
 
-void PushdownAutomata() {
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM3)){
-		
-	}
-}
+//void PushdownAutomata() {
+//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM3)){
+//		
+//	}
+//}
 
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
@@ -558,9 +558,7 @@ void TutorialGame::InitGameExamples() {
 }
 
 void TutorialGame::InitMainMenu() {	
-	mainMenuActive = true;
-
-	
+	mainMenuActive = true;	
 }
 
 void TutorialGame::InitLevel1() {
@@ -659,10 +657,7 @@ void TutorialGame::InitLevel2() {
 	bool found = grid.FindPath(startPos, endPos, outPath);
 
 	std::cout << grid.FindPath(startPos, endPos, outPath) << std::endl;
-
-
-
-	
+		
 	Vector3 pos;
 	while (outPath.PopWaypoint(pos)) {
 		testNodes.push_back(pos);
@@ -822,7 +817,10 @@ bool TutorialGame::SelectObject() {
 		}
 	}
 	else {
-		renderer->DrawString("Press Q to change to select mode!", Vector2(5, 85));
+		if (!mainMenuActive) {
+			renderer->DrawString("Press Q to change to select mode!", Vector2(5, 85));
+		}
+		
 	}
 
 	if (lockedObject) {
