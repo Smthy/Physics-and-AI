@@ -17,6 +17,8 @@
 #include "../CSC8503Common/BehaviourSequence.h"
 #include "../CSC8503Common/BehaviourSelector.h"
 
+#include "../../Common/Assets.h"
+
 
 using namespace NCL;
 using namespace CSC8503;
@@ -63,9 +65,10 @@ void TutorialGame::InitialiseAssets() {
 	InitCamera();
 	InitWorld();
 
-	TestPathfinding();
-	DisplayPathfinding();
-	TestStateMachine();
+	//TestPathfinding();
+	//TestStateMachine();
+
+	
 	
 }
 
@@ -105,16 +108,13 @@ void TutorialGame::UpdateGame(float dt) {
 		renderer->DrawString("Physcis Level 1", Vector2(10, 45), Debug::DARKGREEN, 35.0f);
 		renderer->DrawString("AI Level 2", Vector2(10, 55), Debug::DARKGREEN, 35.0f);
 		renderer->DrawString("Exit", Vector2(10, 65), Debug::DARKRED, 35.0f);
-	}
-	
+	}	
 
 	if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}
 
 	UpdateKeys();
-
-	
 
 	SelectObject();
 	MoveSelectedObject();
@@ -155,15 +155,11 @@ void TutorialGame::UpdateGame(float dt) {
 	if (testStateObject) {
 		testStateObject->Update(dt);
 	}
-
-
-	/*if (InitLevel2)
-	{
-		return;
-	}
-	else {
+	if (level2Loaded) {
 		DisplayPathfinding();
-	}*/
+		//AIMovement(dt);
+	}
+	
 	
 
 	//std::cout << world->GetMainCamera()->GetPosition() << std::endl;
@@ -325,13 +321,11 @@ void TutorialGame::InitCamera() {
 //	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM3)){
 //		
 //	}
-//}
+//} love you 
 
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
-	physics->Clear();
-	
-	
+	physics->Clear();	
 	
 	//InitMainMenu();
 	//InitLevel1();
@@ -346,6 +340,7 @@ void TutorialGame::InitWorld() {
 
 	//AddFloorToWorld(Vector3(0, -2, 0));
 	//DisplayPathfinding();
+
 	
 }
 
@@ -637,23 +632,44 @@ void TutorialGame::InitLevel1() {
 	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
 	
 	AddFloorToWorld(Vector3(0, -100, 0));
+	level2Loaded = false;
 }
 
-void TutorialGame::MazeLoader(const string& file) {
+void TutorialGame::MazeLoader(const std::string& filename) {
+	//"TestGrid1.txt"
+	std::ifstream infile(Assets::DATADIR + filename);
+	//std::ifstream infile("TestGrid1.txt");
+	string nLine;
+	int k = 0;
+	if (infile.is_open()) {
+		for (nLine; (getline(infile, nLine));) {
+			//std::cout << temp << '\n';
+			if (nLine[0] == 'x') {								
+				for (int i = 0; i < nLine.length(); i++) {
+					if (nLine[i] == 'x') {
+						AddAABBCubeToWorld(Vector3(i * 10, 1, k * 10), Vector3(5, 5, 5), Debug::WHITE, "cube_:)", 0);
+					}						
+				}
+				k++;
+			}			
+		}
+	}
 	
 }
 
 void TutorialGame::InitLevel2() {
 	mainMenuActive = false;
-	vector<Vector3> testNodes;
-	ball = AddSphereToWorld(Vector3(180, 0, 180), 1.0f, "Ball", 1.0f);
-	bAI = AddSphereToWorld(Vector3(20, 0, 20), 1.0f, "BTai", 1.0f);
+	MazeLoader("TestGrid1.txt");
+		
+	ball = AddSphereToWorld(Vector3(10, 1, 10), 1.0f, "Ball", 1.0f);
+	bAI = AddSphereToWorld(Vector3(130, 1, 140), 1.0f, "BTai", 1.0f);
+	bAI->GetRenderObject()->SetColour(Debug::RED);
 
 	NavigationGrid grid("TestGrid1.txt");
 	NavigationPath outPath;
 
-	Vector3 startPos = ball->GetTransform().GetPosition();
-	Vector3 endPos = bAI->GetTransform().GetPosition();
+	Vector3 startPos = Vector3(bAI->GetTransform().GetPosition());
+	Vector3 endPos = Vector3(ball->GetTransform().GetPosition());
 	bool found = grid.FindPath(startPos, endPos, outPath);
 
 	std::cout << grid.FindPath(startPos, endPos, outPath) << std::endl;
@@ -661,17 +677,42 @@ void TutorialGame::InitLevel2() {
 	Vector3 pos;
 	while (outPath.PopWaypoint(pos)) {
 		testNodes.push_back(pos);
-	}
+	}	
+	
+	AddFloorToWorld(Vector3(0, -1, 0));
+	level2Loaded = true;
+}
 
+void TutorialGame::AIMovement(float dt) {
+	if (bAI == NULL) {
+		return;
+	}	
+	Vector3 distance;
+	Vector3 currentPos = bAI->GetTransform().GetPosition();
+	Vector3 a;
+	
+	if (distance.Length() < 1) {
+		
+		a = testNodes[bAIPos];
+
+		bAIPos++;
+ 	}	
+
+	distance = a - currentPos;
+
+
+	
+	std::cout << bAIPos << std::endl;
+	Vector3 dir = distance.Normalised();
+	bAI->GetTransform().SetPosition(currentPos + (dir * speed * dt));
+}
+
+void TutorialGame::DisplayPathfinding() {	
 	for (int i = 1; i < testNodes.size(); ++i) {
 		Vector3 a = testNodes[i - 1];
 		Vector3 b = testNodes[i];
-
-		Debug::DrawLine(a, b, Debug::DARKGREEN);
+		Debug::DrawLine(a, b, Vector4(0, 1, 0, 1));
 	}
-	
-	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
-	AddFloorToWorld(Vector3(0, 0, 0));
 }
 
 GameObject* TutorialGame::AddPlayerToWorld(const Vector3& position) {
@@ -899,7 +940,6 @@ void TutorialGame::MoveSelectedObject() {
 }
 
 // ----- AI -----
-vector<Vector3> testNodes;
 void TutorialGame::TestStateMachine() {
 	StateMachine* testMachine = new StateMachine();
 	int data = 0;
@@ -940,29 +980,17 @@ void TutorialGame::TestStateMachine() {
 	}
 }
 
-void TutorialGame::TestPathfinding() {
-	NavigationGrid grid("TestGrid1.txt");
-	NavigationPath outPath;
+void TutorialGame::AIMovementStateMachine() {
+	StateMachine* aiMove = new StateMachine();
+	int data = 0;
 
-	Vector3 startPos(80, 0, 10);
-	Vector3 endPos(80, 0, 80);
-
-	bool found = grid.FindPath(startPos, endPos, outPath);
-	Vector3 pos;
-	while (outPath.PopWaypoint(pos)) {
-		testNodes.push_back(pos);
-	}
+	State* MoveToNextNode = new State([&](float dt)->void
+		{
+			std::cout << "Going to the next Node!\n";
+		}
+	);
 }
 
-
-void TutorialGame::DisplayPathfinding() {
-	for (int i = 1; i < testNodes.size(); ++i) {
-		Vector3 a = testNodes[i - 1];
-		Vector3 b = testNodes[i];
-
-		Debug::DrawLine(a, b, Debug::CYAN);
-	}
-}
 void TutorialGame::TestBehaviourTree() {
 	float behaviourTimer;
 	float distanceToTarget;

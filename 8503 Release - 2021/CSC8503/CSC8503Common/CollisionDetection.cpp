@@ -318,6 +318,10 @@ bool CollisionDetection::ObjectIntersection(GameObject* a, GameObject* b, Collis
 		return false;
 	}
 
+	if (a->GetPhysicsObject()->GetInverseMass() == 0 && b->GetPhysicsObject()->GetInverseMass() == 0) {
+		return false;
+	}
+
 	collisionInfo.a = a;
 	collisionInfo.b = b;
 
