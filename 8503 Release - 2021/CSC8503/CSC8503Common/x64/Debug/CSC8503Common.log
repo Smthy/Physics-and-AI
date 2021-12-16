@@ -1,8 +1,1 @@
-﻿  NavigationGrid.cpp
-H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(80,12): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(81,12): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(82,10): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-  NavigationMesh.cpp
-  Generating Code...
-H:\GitHub\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(83,10): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-  CSC8503Common.vcxproj -> H:\GitHub\Physics-and-AI\8503 Release - 2021\x64\Debug\CSC8503Common.lib
+﻿  CSC8503Common.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\CSC8503Common.lib

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <utility>
-
 #include "TutorialGame.h"
 #include "../CSC8503Common/PositionConstraint.h"
 #include "../CSC8503Common/GameWorld.h"
@@ -8,7 +7,6 @@
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
-
 #include "../CSC8503Common/StateMachine.h"
 #include "../CSC8503Common/StateTransition.h"
 #include "../CSC8503Common/State.h"
@@ -16,9 +14,7 @@
 #include "../CSC8503Common/BehaviourAction.h"
 #include "../CSC8503Common/BehaviourSequence.h"
 #include "../CSC8503Common/BehaviourSelector.h"
-
 #include "../../Common/Assets.h"
-
 
 using namespace NCL;
 using namespace CSC8503;
@@ -59,7 +55,7 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("checkerboard.png"); //checkerboard.png 
+	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("doge.png"); //checkerboard.png 
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
 	InitCamera();
@@ -157,7 +153,7 @@ void TutorialGame::UpdateGame(float dt) {
 	}
 	if (level2Loaded) {
 		DisplayPathfinding();
-		//AIMovement(dt);
+		AIMovement(dt);
 	}
 	
 	
@@ -316,12 +312,6 @@ void TutorialGame::InitCamera() {
 	world->GetMainCamera()->SetPosition(Vector3(-60, 40, 60));
 	lockedObject = nullptr;
 }
-
-//void PushdownAutomata() {
-//	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM3)){
-//		
-//	}
-//} love you 
 
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
@@ -647,7 +637,7 @@ void TutorialGame::MazeLoader(const std::string& filename) {
 			if (nLine[0] == 'x') {								
 				for (int i = 0; i < nLine.length(); i++) {
 					if (nLine[i] == 'x') {
-						AddAABBCubeToWorld(Vector3(i * 10, 1, k * 10), Vector3(5, 5, 5), Debug::WHITE, "cube_:)", 0);
+						AddAABBCubeToWorld(Vector3(i * 10, 0.1, k * 10), Vector3(5, 5, 5), Debug::WHITE, "cube_:)", 0);
 					}						
 				}
 				k++;
@@ -661,48 +651,53 @@ void TutorialGame::InitLevel2() {
 	mainMenuActive = false;
 	MazeLoader("TestGrid1.txt");
 		
-	ball = AddSphereToWorld(Vector3(10, 1, 10), 1.0f, "Ball", 1.0f);
-	bAI = AddSphereToWorld(Vector3(130, 1, 140), 1.0f, "BTai", 1.0f);
-	bAI->GetRenderObject()->SetColour(Debug::RED);
+	ball = AddSphereToWorld(Vector3(10, 0.5, 10), 1.0f, "Ball", 1.0f);
+	bAI = AddSphereToWorld(Vector3(130, 0.5, 140), 1.0f, "BTai", 1.0f);
+	bAI->GetRenderObject()->SetColour(Debug::RED);	
+	AddFloorToWorld(Vector3(0, -1, 0));
+	
+	DrawPath();
+	level2Loaded = true;
+}
 
+void TutorialGame::DrawPath() {
+	
 	NavigationGrid grid("TestGrid1.txt");
 	NavigationPath outPath;
 
 	Vector3 startPos = Vector3(bAI->GetTransform().GetPosition());
 	Vector3 endPos = Vector3(ball->GetTransform().GetPosition());
+	
 	bool found = grid.FindPath(startPos, endPos, outPath);
 
-	std::cout << grid.FindPath(startPos, endPos, outPath) << std::endl;
-		
 	Vector3 pos;
 	while (outPath.PopWaypoint(pos)) {
 		testNodes.push_back(pos);
-	}	
-	
-	AddFloorToWorld(Vector3(0, -1, 0));
-	level2Loaded = true;
+	}
 }
 
 void TutorialGame::AIMovement(float dt) {
+	
 	if (bAI == NULL) {
 		return;
 	}	
-	Vector3 distance;
-	Vector3 currentPos = bAI->GetTransform().GetPosition();
-	Vector3 a;
 	
-	if (distance.Length() < 1) {
-		
-		a = testNodes[bAIPos];
-
-		bAIPos++;
- 	}	
-
-	distance = a - currentPos;
-
-
+	Vector3 currentPos = bAI->GetTransform().GetPosition();	
 	
-	std::cout << bAIPos << std::endl;
+	
+	if (distance.Length() < 5) {	
+		DrawPath();
+		for (bAIPos; bAIPos < testNodes.size(); bAIPos++)
+		{
+			if (testNodes.empty()) {
+				DrawPath();
+			}
+			testNodes.clear();
+		}	
+	}	
+
+	distance = testNodes[bAIPos] - currentPos;
+
 	Vector3 dir = distance.Normalised();
 	bAI->GetTransform().SetPosition(currentPos + (dir * speed * dt));
 }
@@ -946,14 +941,14 @@ void TutorialGame::TestStateMachine() {
 
 	State* A = new State([&](float dt)->void
 		{
-			std::cout << "I'm in state!\n";
+			std::cout << "I'm in a state!\n";
 			data++;
 		}
 	);
 
 	State* B = new State([&](float dt)->void
 		{
-			std::cout << "I'm in state!\n";
+			std::cout << "I'm in a state!\n";
 			data--;
 		}
 	);

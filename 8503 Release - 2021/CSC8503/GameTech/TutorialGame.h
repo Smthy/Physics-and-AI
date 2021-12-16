@@ -13,9 +13,7 @@ namespace NCL {
 		public:
 			TutorialGame();
 			~TutorialGame();
-
-			virtual void UpdateGame(float dt);
-			
+			virtual void UpdateGame(float dt);		
 
 		protected:
 			void InitialiseAssets();
@@ -27,10 +25,7 @@ namespace NCL {
 
 			void InitGameExamples();
 			void InitSphereOnly();
-			void InitMainMenu();
-			
-
-			
+			void InitMainMenu();			
 			void InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius);
 			void InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing);
 			void InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims);
@@ -52,16 +47,16 @@ namespace NCL {
 			void AIMovementStateMachine();
 			//void TestPathfinding();
 			void DisplayPathfinding();
+			void DrawPath();
 			void TestBehaviourTree();
 
-			//void MazeLoader();
 			void MazeLoader(const std::string& filename);
 
 			GameObject* AddFloorToWorld(const Vector3& position);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name,float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name,float inverseMass = 10.0f);
 			GameObject* AddAABBCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float inverseMass = 10.0f);
-
+			
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 
 			GameObject* AddPlayerToWorld(const Vector3& position);
@@ -115,15 +110,12 @@ namespace NCL {
 			bool mainMenuActive = false;
 			bool level2Loaded = false;
 
-			//string filename = "TestGrid1.txt";
-
 			vector<Vector3> testNodes;
-			
-			Vector3 currentNode;
-			Vector3 nextNode;
+
 
 			int bAIPos = 1;
 			Vector3 tarPos;
+			Vector3 distance;
 		};
 	
 	}
