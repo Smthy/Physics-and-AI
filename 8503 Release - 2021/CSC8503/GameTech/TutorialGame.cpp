@@ -55,7 +55,7 @@ void TutorialGame::InitialiseAssets() {
 	loadFunc("coin.msh"		 , &bonusMesh);
 	loadFunc("capsule.msh"	 , &capsuleMesh);
 
-	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("doge.png"); //checkerboard.png 
+	basicTex	= (OGLTexture*)TextureLoader::LoadAPITexture("newTex.png"); //checkerboard.png 
 	basicShader = new OGLShader("GameTechVert.glsl", "GameTechFrag.glsl");
 
 	InitCamera();
@@ -316,22 +316,9 @@ void TutorialGame::InitCamera() {
 void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();	
-	
-	//InitMainMenu();
-	//InitLevel1();
-	InitLevel2();
-
-	//InitMixedGridWorld(5, 5, 3.5f, 3.5f);
-	//InitGameExamples();
-	//testStateObject = AddStateObjectToWorld(Vector3(0, 20, 0));
-	//BridgeConstraintTest();
-
 		
-
-	//AddFloorToWorld(Vector3(0, -2, 0));
-	//DisplayPathfinding();
-
-	
+	InitLevel1();
+	//InitLevel2();	
 }
 
 void TutorialGame::BridgeConstraintTest() {
@@ -366,7 +353,7 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 
-GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
+GameObject* TutorialGame::AddFloorToWorld(const Vector3& position, string name) {
 	GameObject* floor = new GameObject();
 
 	Vector3 floorSize	= Vector3(500, 0.01, 500);
@@ -502,7 +489,7 @@ void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacin
 			AddSphereToWorld(position, radius, "Not Needed", 1.0f);
 		}
 	}
-	AddFloorToWorld(Vector3(0, -2, 0));
+	AddFloorToWorld(Vector3(0, -2, 0), "floor");
 }
 
 void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing) {
@@ -533,7 +520,7 @@ void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing,
 }
 
 void TutorialGame::InitDefaultFloor() {
-	AddFloorToWorld(Vector3(0, -2, 0));
+	AddFloorToWorld(Vector3(0, -2, 0), "floor");
 }
 
 void TutorialGame::InitGameExamples() {
@@ -543,7 +530,37 @@ void TutorialGame::InitGameExamples() {
 }
 
 void TutorialGame::InitMainMenu() {	
-	mainMenuActive = true;	
+	mainMenuActive = true;
+
+	Debug::Print("Physics and AI", Vector2(30, 30), Debug::DARKPURPLE);
+	Debug::Print("Physics Level - Click 1", Vector2(20, 30), Debug::DARKPURPLE);
+	Debug::Print("AI Level - Click 2", Vector2(25, 30), Debug::DARKPURPLE);
+	Debug::Print("QUIT!", Vector2(40, 30), Debug::DARKPURPLE);
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM1)) {
+		choice = 1;
+	}
+
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM2)) {
+		choice = 2;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+		
+		//Close App
+	}
+
+	switch (choice)
+	{
+	case 1:
+		InitLevel1();
+		break;
+	case 2:
+		InitLevel2();
+		break;
+	default:
+		break;
+	}
+
+
 }
 
 void TutorialGame::InitLevel1() {
@@ -621,7 +638,7 @@ void TutorialGame::InitLevel1() {
 	 
 	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 1.0f);  //------------------- Starting Position of the ball
 	
-	AddFloorToWorld(Vector3(0, -100, 0));
+	AddFloorToWorld(Vector3(0, -100, 0), "floor");
 	level2Loaded = false;
 }
 
@@ -654,7 +671,8 @@ void TutorialGame::InitLevel2() {
 	ball = AddSphereToWorld(Vector3(10, 0.5, 10), 1.0f, "Ball", 1.0f);
 	bAI = AddSphereToWorld(Vector3(130, 0.5, 140), 1.0f, "BTai", 1.0f);
 	bAI->GetRenderObject()->SetColour(Debug::RED);	
-	AddFloorToWorld(Vector3(0, -1, 0));
+	ball->GetRenderObject()->SetColour(Debug::BLUE);
+	AddFloorToWorld(Vector3(0, -1, 0), "floor2");
 	
 	DrawPath();
 	level2Loaded = true;
@@ -677,29 +695,26 @@ void TutorialGame::DrawPath() {
 }
 
 void TutorialGame::AIMovement(float dt) {
+	Vector3 dis;
 	
 	if (bAI == NULL) {
 		return;
 	}	
 	
-	Vector3 currentPos = bAI->GetTransform().GetPosition();	
+	Vector3 currentPos = bAI->GetTransform().GetPosition();
 	
-	
-	if (distance.Length() < 5) {	
-		DrawPath();
-		for (bAIPos; bAIPos < testNodes.size(); bAIPos++)
-		{
-			if (testNodes.empty()) {
-				DrawPath();
-			}
-			testNodes.clear();
-		}	
+	if (dis.Length() < 0.05f) {
+		std::cout << testNodes.size() << std::endl;
+		testNodes.clear();
+		DrawPath();		
+		testNodes.erase(testNodes.cbegin());
 	}	
 
-	distance = testNodes[bAIPos] - currentPos;
+	Vector3 dir = (testNodes[0] - currentPos);
+	dis = dir.Normalised();
 
-	Vector3 dir = distance.Normalised();
-	bAI->GetTransform().SetPosition(currentPos + (dir * speed * dt));
+	bAI->GetTransform().SetPosition(currentPos + (dir * speed * dt));	
+	
 }
 
 void TutorialGame::DisplayPathfinding() {	

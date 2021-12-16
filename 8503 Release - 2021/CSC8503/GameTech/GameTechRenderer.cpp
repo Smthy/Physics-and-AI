@@ -59,7 +59,7 @@ GameTechRenderer::~GameTechRenderer()	{
 
 void GameTechRenderer::LoadSkybox() {
 	string filenames[6] = {
-		"Doge.png",
+		"DogeWink.png",
 		"Doge.png",
 		"Doge.png",
 		"Doge.png",

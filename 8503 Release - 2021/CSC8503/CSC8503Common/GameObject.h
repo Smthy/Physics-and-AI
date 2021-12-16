@@ -64,16 +64,17 @@ namespace NCL {
 			const string& GetName() const {
 				return name;
 			}
+
 			
 			virtual void OnCollisionBegin(GameObject* otherObject) {
 				//std::cout << "OnCollisionBegin event occured!\n";
-				if (this->name == "Ball" && otherObject->name == "Cube_21") {
+				if (this->GetName() == "Ball" && otherObject->GetName() == "Cube_21") {
 					
-					std::cout << "END GAME" << std::endl;
-					return;
-
-					//EndGame
-					
+					std::cout << "END GAME" << std::endl;					
+				}
+				if (this->GetName() == "Ball" && otherObject->GetName() == "floor") {
+					std::cout << "Hit floor" << std::endl;
+					this->GetTransform().SetPosition(Vector3(0, 25, 0));
 				}
 			}
 

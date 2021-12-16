@@ -12,7 +12,8 @@
 #include "../CSC8503Common/PushdownMachine.h"
 
 #include "TutorialGame.h"
-
+#include "Level1.h"
+#include "Level2.h"
 using namespace NCL;
 using namespace CSC8503;
 
@@ -56,19 +57,49 @@ protected:
 
 class GameScreen1 : public PushdownState {
 	PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-	pauseReminder -= dt;
-	if (pauseReminder < 0) {
-		pauseReminder += 1.0f;
-	}
-	if (Window::GetKeyboard()-> KeyDown(KeyboardKeys::P)) {
-		*newState = new PauseScreen();
-		return PushdownResult::Push;
+	
+	if (Window::GetKeyboard()-> KeyDown(KeyboardKeys::ESCAPE)) {
+		
+		return PushdownResult::Pop;
 	}							
 	return PushdownResult::NoChange;
 };
 
 void OnAwake() override {
 	std::cout << "Entering 1" << std::endl;
+	Load();
+}
+void Load(){
+	Window* g = Window::GetWindow();
+	srand(time(0));
+	g->ShowOSPointer(false);
+	g->LockMouseToWindow(true);
+	Level1* l1 = new Level1();
+	g->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
+
+	
+	while (g->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+		float dt = g->GetTimer()->GetTimeDeltaSeconds();
+		if (dt > 0.1f) {
+			std::cout << "Skipping large time delta" << std::endl;
+			continue; //must have hit a breakpoint or something to have a 1 second frame time!
+		}
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
+			g->ShowConsole(true);
+		}
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT)) {
+			g->ShowConsole(false);
+		}
+
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::T)) {
+			g->SetWindowPosition(0, 0);
+		}
+
+		g->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
+		
+		l1->UpdateGame(dt);		
+	}
+	PushdownResult::Pop;
 }
 protected:
 	float pauseReminder = 1;
@@ -77,24 +108,48 @@ protected:
 
 class GameScreen2 : public PushdownState {
 	PushdownResult OnUpdate(float dt, PushdownState** newState) override {
-	pauseReminder -= dt;
-	if (pauseReminder < 0) {	
-		std::cout << "Level 2" << std::endl;
-		pauseReminder += 1.0f;
-	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::P)) {
-		*newState = new PauseScreen();
-		return PushdownResult::Push;
-	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::M)) {
-		*newState = new GameScreen();
-		return PushdownResult::Push;
-	}				
-	return PushdownResult::NoChange;
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+
+			return PushdownResult::Pop;
+		}
+		return PushdownResult::NoChange;
 };
 
 void OnAwake() override {
 	std::cout << "Entering 2" << std::endl;
+	load();
+}
+void load() {
+	Window* g = Window::GetWindow();
+	srand(time(0));
+	g->ShowOSPointer(false);
+	g->LockMouseToWindow(true);
+	Level2* l2 = new Level2();
+	g->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
+
+
+	while (g->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+		float dt = g->GetTimer()->GetTimeDeltaSeconds();
+		if (dt > 0.1f) {
+			std::cout << "Skipping large time delta" << std::endl;
+			continue; //must have hit a breakpoint or something to have a 1 second frame time!
+		}
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
+			g->ShowConsole(true);
+		}
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT)) {
+			g->ShowConsole(false);
+		}
+
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::T)) {
+			g->SetWindowPosition(0, 0);
+		}
+
+		g->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
+
+		l2->UpdateGame(dt);
+	}
+	PushdownResult::Pop;
 }
 protected:
 	float pauseReminder = 1;
@@ -104,10 +159,13 @@ protected:
 class IntroScreen : public PushdownState {
 	PushdownResult OnUpdate(float dt, PushdownState** newState) override {
 	Debug::FlushRenderables(dt);
+	renderer->Render();
+
+	renderer->DrawString("Physics and AI", Vector2(20, 30), Debug::DARKPURPLE, 50.0f);
 
 	Debug::Print("Physics and AI", Vector2(30, 30), Debug::DARKPURPLE);
-	Debug::Print("Physics Level - Click 1", Vector2(20, 30), Debug::DARKPURPLE);
-	Debug::Print("AI Level - Click 2", Vector2(25, 30), Debug::DARKPURPLE);
+	Debug::Print("Physics Level - Click 1", Vector2(30, 30), Debug::DARKPURPLE);
+	Debug::Print("AI Level - Click 2", Vector2(30, 30), Debug::DARKPURPLE);
 	Debug::Print("QUIT!", Vector2(40, 30), Debug::DARKPURPLE);
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM1)) {
@@ -138,12 +196,16 @@ class IntroScreen : public PushdownState {
 };
 
 void OnAwake() override {
-
+	world = new GameWorld();
+	renderer = new GameTechRenderer(*world);
+	Debug::SetRenderer(renderer);
 }
 
 protected:
 	float pauseReminder = 1;
 	TutorialGame* game = nullptr;
+	GameWorld* world;
+	GameTechRenderer* renderer;
 };
 
 
@@ -187,30 +249,31 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 	
+	TestPushdownAutomata(w);/*
 	TutorialGame* g = new TutorialGame();
-	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
+	w->GetTimer()->GetTimeDeltaSeconds()*/; //Clear the timer so we don't get a larget first dt!
 	
-	
-	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
-		float dt = w->GetTimer()->GetTimeDeltaSeconds();
-		if (dt > 0.1f) {
-			std::cout << "Skipping large time delta" << std::endl;
-			continue; //must have hit a breakpoint or something to have a 1 second frame time!
-		}
-		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
-			w->ShowConsole(true);
-		}
-		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT)) {
-			w->ShowConsole(false);
-		}
+	//
+	//while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+	//	float dt = w->GetTimer()->GetTimeDeltaSeconds();
+	//	if (dt > 0.1f) {
+	//		std::cout << "Skipping large time delta" << std::endl;
+	//		continue; //must have hit a breakpoint or something to have a 1 second frame time!
+	//	}
+	//	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
+	//		w->ShowConsole(true);
+	//	}
+	//	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT)) {
+	//		w->ShowConsole(false);
+	//	}
 
-		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::T)) {
-			w->SetWindowPosition(0, 0);
-		}
+	//	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::T)) {
+	//		w->SetWindowPosition(0, 0);
+	//	}
 
-		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
-		
-		g->UpdateGame(dt);		
-	}
-	Window::DestroyGameWindow();
+	//	w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
+	//	
+	//	g->UpdateGame(dt);		
+	//}
+	//Window::DestroyGameWindow();
 }

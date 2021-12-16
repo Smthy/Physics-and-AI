@@ -52,7 +52,7 @@ namespace NCL {
 
 			void MazeLoader(const std::string& filename);
 
-			GameObject* AddFloorToWorld(const Vector3& position);
+			GameObject* AddFloorToWorld(const Vector3& position, string name);
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name,float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name,float inverseMass = 10.0f);
 			GameObject* AddAABBCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float inverseMass = 10.0f);
@@ -105,7 +105,7 @@ namespace NCL {
 			int pass = 0;
 			Vector3 pos[2] = { Vector3(51, -0.5, 47), Vector3(51, -6.5, 47) };
 			float wallSpeed = 1.0f;
-			float speed = 10.0f;
+			float speed = 0.5f;
 
 			bool mainMenuActive = false;
 			bool level2Loaded = false;
@@ -113,9 +113,12 @@ namespace NCL {
 			vector<Vector3> testNodes;
 
 
-			int bAIPos = 1;
+			int bAIPos = 0;
 			Vector3 tarPos;
 			Vector3 distance;
+			int choice = 0;
+
+
 		};
 	
 	}
