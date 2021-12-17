@@ -328,12 +328,12 @@ void Level1::BridgeConstraintTest() {
 	float cubeDistance = 2; // distance between links
 	
 	Vector3 startPos = Vector3(5, -20, 0);
-	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Debug::RED, "cubeStart", 0.825f, 0);
-	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2)  * cubeDistance, 0, 0), cubeSize, Debug::RED, "cubeEnd", 0.825f, 0);
+	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Debug::RED, "cubeStart", 0.825f, 0.2f,0);
+	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2)  * cubeDistance, 0, 0), cubeSize, Debug::RED, "cubeEnd", 0.825f, 0.2f ,0);
 	end->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 25.0f));
 	GameObject * previous = start;
 	for (int i = 0; i < numLinks; ++i) {
-		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Debug::WHITE, "cubeMid", 0.825f, invCubeMass);
+		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Debug::WHITE, "cubeMid", 0.825f, 0.2f,invCubeMass);
 		PositionConstraint * constraint = new PositionConstraint(previous, block, maxDistance);
 		world->AddConstraint(constraint);
 		previous = block;
@@ -371,7 +371,7 @@ GameObject* Level1::AddFloorToWorld(const Vector3& position, string name) {
 	return floor;
 }
 
-GameObject* Level1::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 color, string name, float elstacity,float inverseMass) {
+GameObject* Level1::AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 color, string name, float elstacity, float friction,float inverseMass) {
 	GameObject* cube = new GameObject();
 
 	OBBVolume* volume = new OBBVolume(dimensions);
@@ -388,6 +388,7 @@ GameObject* Level1::AddCubeToWorld(const Vector3& position, Vector3 dimensions, 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
 	cube->GetPhysicsObject()->InitCubeInertia();
 	cube->GetPhysicsObject()->SetElasticity(elstacity);
+	cube->GetPhysicsObject()->SetFriction(friction);
 
 	cube->SetName(name);
 	cube->GetRenderObject()->SetColour(color);
@@ -430,7 +431,7 @@ rigid body representation. This and the cube function will let you build a lot o
 physics worlds. You'll probably need another function for the creation of OBB cubes too.
 
 */
-GameObject* Level1::AddSphereToWorld(const Vector3& position, float radius, string name, float elstacity,float inverseMass) {
+GameObject* Level1::AddSphereToWorld(const Vector3& position, float radius, string name, float elstacity, float friction,float inverseMass) {
 	GameObject* sphere = new GameObject();
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
@@ -448,6 +449,7 @@ GameObject* Level1::AddSphereToWorld(const Vector3& position, float radius, stri
 	sphere->SetName(name);
 	sphere->GetPhysicsObject()->InitSphereInertia();
 	sphere->GetPhysicsObject()->SetElasticity(elstacity);
+	sphere->GetPhysicsObject()->SetFriction(friction);
 
 
 
@@ -480,75 +482,71 @@ GameObject* Level1::AddCapsuleToWorld(const Vector3& position, float halfHeight,
 void Level1::InitLevel1() {
 	mainMenuActive = false;
 	//Section_1
-	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Debug::ORANGE, "Cube_01", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -5.0f));
-	//AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_02", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
-	AddCubeToWorld(Vector3(20, -30, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
-	AddCubeToWorld(Vector3(26, -25, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
-	AddCubeToWorld(Vector3(32, -20, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
-	AddCubeToWorld(Vector3(38, -15, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
-	AddCubeToWorld(Vector3(44, -10, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
-	AddCubeToWorld(Vector3(57, -3, 0), Vector3(11, 0.1, 3), Debug::ORANGE, "Cube_03", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Debug::ORANGE, "Cube_01", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -5.0f));
+	//AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_02", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(20, -30, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(26, -25, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(32, -20, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(38, -15, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(44, -10, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
+	AddCubeToWorld(Vector3(57, -3, 0), Vector3(11, 0.1, 3), Debug::ORANGE, "Cube_03", 0.825f, 0.2f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
 
 	//section_2
-	AddCubeToWorld(Vector3(68, -2, 0), Vector3(0.1, 2, 3), Debug::DARKPURPLE, "PullWallX", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
-	AddCubeToWorld(Vector3(65, -2, -3), Vector3(3, 2, 0.1), Debug::DARKGREEN, "BoostPadHZ", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddAABBCubeToWorld(Vector3(68, -2, 0), Vector3(0.1, 2, 3), Debug::DARKPURPLE, "PullWallX", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddAABBCubeToWorld(Vector3(68, 20, -0), Vector3(1, 1, 1), Debug::BLUE, "Cube_02", 10.0f, 10)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddAABBCubeToWorld(Vector3(65, -2, -3), Vector3(3, 2, 0.1), Debug::DARKGREEN, "BoostPadHZ", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
 
-	AddCubeToWorld(Vector3(68, -3.25, 17), Vector3(0.1, 1.5, 14), Debug::ORANGE, "Wall_01", 0.825f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
-	AddCubeToWorld(Vector3(62, -3.25, 17), Vector3(0.1, 1.5, 14), Debug::ORANGE, "Wall_02", 0.825f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(68, -3.25, 17), Vector3(0.1, 1.5, 14), Debug::ORANGE, "Wall_01", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(62, -3.25, 17), Vector3(0.1, 1.5, 14), Debug::ORANGE, "Wall_02", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
 
-	AddCubeToWorld(Vector3(65, -3.5, 5), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_04", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
-	AddCubeToWorld(Vector3(65, -3.9, 8), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_05", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
-	AddCubeToWorld(Vector3(65, -4.2, 11), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_06", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
-	AddCubeToWorld(Vector3(65, -4.4, 14), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_07", 0.825f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
-	AddCubeToWorld(Vector3(65, -4.4, 17), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_08", 0.825f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
-	AddCubeToWorld(Vector3(65, -4.2, 20), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_09", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
-	AddCubeToWorld(Vector3(65, -3.9, 23), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_10", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
-	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_11", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
+	AddCubeToWorld(Vector3(65, -3.5, 5), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_04", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
+	AddCubeToWorld(Vector3(65, -3.9, 8), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_05", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
+	AddCubeToWorld(Vector3(65, -4.2, 11), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_06", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 15.0f));
+	AddCubeToWorld(Vector3(65, -4.4, 14), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_07", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(65, -4.4, 17), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_08", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	AddCubeToWorld(Vector3(65, -4.2, 20), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_09", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
+	AddCubeToWorld(Vector3(65, -3.9, 23), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_10", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -15.0f));
+	AddCubeToWorld(Vector3(65, -3.3, 26), Vector3(3, 0.1, 1.5), Debug::ORANGE, "Cube_11", 0.825f, 0.2f, 0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, -5.0f));
 	//section_3
-	AddCubeToWorld(Vector3(65, -3.5, 45), Vector3(3, 0.1, 5), Debug::ORANGE, "Cube_12", 0.825f,0);
-	AddCubeToWorld(Vector3(65, 5, 50), Vector3(3, 10.5, 0.1), Debug::DARKPURPLE, "PullWallZ", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
-	AddCubeToWorld(Vector3(68, -2.5, 47), Vector3(0.1, 2, 3), Debug::DARKGREEN, "BoostPadHX", 0.825f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
-	AddCubeToWorld(Vector3(57, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_13", 0.825f, 0);
+	AddCubeToWorld(Vector3(65, -3.5, 45), Vector3(3, 0.1, 5), Debug::ORANGE, "Cube_12", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(65, 5, 50), Vector3(3, 10.5, 0.1), Debug::DARKPURPLE, "PullWallZ", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
+	AddCubeToWorld(Vector3(68, -2.5, 47), Vector3(0.1, 2, 3), Debug::DARKGREEN, "BoostPadHX", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(1, 0, 0, 0.0f));
+	AddCubeToWorld(Vector3(57, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_13", 0.825f, 0.2f,0);
 
-	movingWall = AddCubeToWorld(Vector3(51, -5.5, 47), Vector3(1, 2, 3), Debug::CYAN, "BouncyWall", 5.0f,0);
+	movingWall = AddCubeToWorld(Vector3(51, -5.5, 47), Vector3(1, 2, 3), Debug::CYAN, "BouncyWall", 5.0f, 0.2f,0);
 
-	AddCubeToWorld(Vector3(45, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_14", 0.825f,0);
-	AddCubeToWorld(Vector3(35.5, -5.415, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_15", 0.825f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 5.0f));
-	AddCubeToWorld(Vector3(24, -4, 47), Vector3(0.1, 3, 3), Debug::ORANGE, "Cube_16", 0.825f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -7.5f));
-	AddCubeToWorld(Vector3(31, -10.25, 47), Vector3(0.1, 3, 3), Debug::DARKGREEN, "BoostPadHX", 0.825f,0);
-	AddCubeToWorld(Vector3(11, -13.25, 47), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_17", 0.825f,0);
-	AddCubeToWorld(Vector3(14, -11.25, 50), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_03", 0.825f, 0);
-	AddCubeToWorld(Vector3(14, -13, 70), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_05", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
-	AddCubeToWorld(Vector3(-3, -11.25, 60), Vector3(0.1, 2, 10), Debug::DARKBLUE, "Wall_07", 0.825f, 0);
-	AddCubeToWorld(Vector3(11, -11.25, 44), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_04", 0.825f, 0);
-	AddCubeToWorld(Vector3(11, -13, 76), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_06", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
-	AddCubeToWorld(Vector3(-9, -11.25, 60), Vector3(0.1, 2, 16), Debug::DARKRED, "Wall_08", 0.825f, 0);
-	AddCubeToWorld(Vector3(-6, -12, 45), Vector3(0.1, 3, 3), Debug::CYAN, "Bank_01", 0.825f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), -45.0f));
-	AddCubeToWorld(Vector3(-7, -12, 74), Vector3(0.1, 3, 3), Debug::CYAN, "Bank_02", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), 45.0f));
-	AddCubeToWorld(Vector3(-6, -13.25, 61), Vector3(3, 0.1, 15), Debug::ORANGE, "Cube_18", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -2.0f));
-	AddCubeToWorld(Vector3(11, -15, 73), Vector3(20, 0.1, 3), Debug::ORANGE, "Cube_19", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
+	AddCubeToWorld(Vector3(45, -3.5, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_14", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(35.5, -5.415, 47), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_15", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 5.0f));
+	AddCubeToWorld(Vector3(24, -4, 47), Vector3(0.1, 3, 3), Debug::ORANGE, "Cube_16", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -7.5f));
+	AddCubeToWorld(Vector3(31, -10.25, 47), Vector3(0.1, 3, 3), Debug::DARKGREEN, "BoostPadHX", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(11, -13.25, 47), Vector3(20, 0.1, 3), Debug::TURQUOISE, "Cube_17", 0.825f, 0.001f,0);
+	AddCubeToWorld(Vector3(14, -11.25, 50), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_03", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(14, -13, 70), Vector3(17, 2, 0.1), Debug::DARKBLUE, "Wall_05", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
+	AddCubeToWorld(Vector3(-3, -11.25, 60), Vector3(0.1, 2, 10), Debug::DARKBLUE, "Wall_07", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(11, -11.25, 44), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_04", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(11, -13, 76), Vector3(20, 2, 0.1), Debug::DARKRED, "Wall_06", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
+	AddCubeToWorld(Vector3(-9, -11.25, 60), Vector3(0.1, 2, 16), Debug::DARKRED, "Wall_08", 0.825f, 0.2f,0);
+	AddCubeToWorld(Vector3(-6, -12, 45), Vector3(0.1, 3, 3), Debug::CYAN, "Bank_01", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), -45.0f));
+	AddCubeToWorld(Vector3(-7, -12, 74), Vector3(0.1, 3, 3), Debug::CYAN, "Bank_02", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 1, 0), 45.0f));
+	AddCubeToWorld(Vector3(-6, -13.25, 61), Vector3(3, 0.1, 15), Debug::TURQUOISE, "Cube_18", 0.825f, 0.01f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -2.0f));
+	AddCubeToWorld(Vector3(11, -15, 73), Vector3(20, 0.1, 3), Debug::TURQUOISE, "Cube_19", 0.825f, 0.01f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -5.0f));
 
-	AddCubeToWorld(Vector3(69, -30, 73), Vector3(40, 0.1, 20), Debug::ORANGE, "Cube_20", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
-	AddCubeToWorld(Vector3(69, -28, 53), Vector3(40, 3, 0.1), Debug::DARKRED, "Cube_20", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
-	AddCubeToWorld(Vector3(69, -28, 93), Vector3(40, 3, 0.1), Debug::DARKRED, "Cube_20", 0.825f, 0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
-	AddSphereToWorld(Vector3(38, -20, 73), 2.5, "Sphere_01", 1.2f,0);
+	AddCubeToWorld(Vector3(69, -30, 73), Vector3(40, 0.1, 20), Debug::TURQUOISE, "Cube_20", 0.825f, 0.001f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddCubeToWorld(Vector3(69, -28, 53), Vector3(40, 3, 0.1), Debug::DARKRED, "Cube_20", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddCubeToWorld(Vector3(69, -28, 93), Vector3(40, 3, 0.1), Debug::DARKRED, "Cube_20", 0.825f, 0.2f,0)->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), -17.5f));
+	AddSphereToWorld(Vector3(38, -20, 73), 2.5, "Sphere_01", 1.2f, 0.2f, 0);
 
-	windMill = AddCubeToWorld(Vector3(72, -30, 64), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill", 1.2f, 0);
+	windMill = AddCubeToWorld(Vector3(72, -30, 64), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill", 1.2f, 0.2f,0);
 	windMill->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 17.5f));
-	windMill_2 = AddCubeToWorld(Vector3(64, -27.5, 80), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill_2", 1.2f, 0);
+	windMill_2 = AddCubeToWorld(Vector3(64, -27.5, 80), Vector3(0.1, 2, 7.5), Debug::DARKRED, "WindMill_2", 1.2f, 0.2f,0);
 	windMill_2->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 17.5f));
 
-	AddSphereToWorld(Vector3(100, -40, 89), 1.5, "Sphere_02", 1.0f, 0);
-	AddSphereToWorld(Vector3(100, -40, 66), 1.5, "Sphere_03", 1.0f, 0);
+	AddSphereToWorld(Vector3(100, -40, 89), 1.5, "Sphere_02", 1.0f, 0.1f ,0);
+	AddSphereToWorld(Vector3(100, -40, 66), 1.5, "Sphere_03", 1.0f, 0.1f ,0);
 
 
 	AddCubeToWorld(Vector3(110, -40, 88), Vector3(5, 0.1, 25), Debug::CYAN, "Cube_21", 0.0f, 0);// Win Condition
-
-
-	//ball = AddSphereToWorld(Vector3(57, 25, 47), 1.0f, "Ball", 1.0f);
-	//ball->SetColor(Debug::DARKRED);
-
-	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 0.825f ,1.0f);  //------------------- Starting Position of the ball
+	ball = AddSphereToWorld(Vector3(0, 25, 0), 1.0f, "Ball", 0.825f , 0.2f ,1.0f);  //------------------- Starting Position of the ball
 
 	AddFloorToWorld(Vector3(0, -100, 0), "floor");
 	level2Loaded = false;

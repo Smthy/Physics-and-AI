@@ -1,1 +1,28 @@
-﻿  CSC8503Common.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\CSC8503Common.lib
+﻿  CollisionDetection.cpp
+  Debug.cpp
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\Debug.cpp(21,60): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\Debug.cpp(22,61): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\Debug.cpp(23,55): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\Debug.cpp(24,62): warning C4305:  'argument': truncation from 'double' to 'float'
+  GameObject.cpp
+  GameWorld.cpp
+  NavigationGrid.cpp
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\Debug.cpp(25,59): warning C4305:  'argument': truncation from 'double' to 'float'
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(80,12): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(81,12): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(82,10): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+  NavigationMesh.cpp
+  PhysicsObject.cpp
+  PhysicsSystem.cpp
+  PositionConstraint.cpp
+  PushdownMachine.cpp
+  PushdownState.cpp
+  QuadTree.cpp
+  RenderObject.cpp
+  StateGameObject.cpp
+  StateMachine.cpp
+  StateTransition.cpp
+  Transform.cpp
+  Generating Code...
+H:\Desktop\Physics-and-AI\8503 Release - 2021\CSC8503\CSC8503Common\NavigationGrid.cpp(83,10): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+  CSC8503Common.vcxproj -> H:\Desktop\Physics-and-AI\8503 Release - 2021\x64\Debug\CSC8503Common.lib

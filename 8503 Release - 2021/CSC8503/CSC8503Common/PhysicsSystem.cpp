@@ -254,7 +254,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Vector3 frictionInertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, tangent), relativeA);
 
 	float fAngularEffect = Vector3::Dot(frictionInertiaA + frictionInertiaB, tangent);
-	float cFriction = 0.2f;
+	float cFriction = ((physA->GetFriciton() + physB->GetFriciton())/2);
 	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
 	float cRestitution = ((physA->GetElasticity() * physB->GetElasticity()) /2);
 

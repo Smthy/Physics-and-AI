@@ -1,1 +1,10 @@
-﻿  OpenGLRendering.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\OpenGLRendering.lib
+﻿  glad.c
+  OGLComputeShader.cpp
+  OGLMesh.cpp
+  OGLRenderer.cpp
+H:\Desktop\Physics-and-AI\8503 Release - 2021\Plugins\OpenGLRendering\OGLRenderer.cpp(301,51): warning C4267:  'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+  OGLShader.cpp
+  OGLTexture.cpp
+  Generating Code...
+H:\Desktop\Physics-and-AI\8503 Release - 2021\Plugins\OpenGLRendering\OGLRenderer.cpp(323,52): warning C4267:  'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
+  OpenGLRendering.vcxproj -> H:\Desktop\Physics-and-AI\8503 Release - 2021\x64\Debug\OpenGLRendering.lib

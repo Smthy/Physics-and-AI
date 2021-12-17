@@ -23,7 +23,7 @@ const Vector4 Debug::DARKGREEN = Vector4(0.02, 0.56, 0.14, 1);
 const Vector4 Debug::ORANGE = Vector4(0.98, 0.45, 0, 1);
 const Vector4 Debug::DARKPURPLE = Vector4(0.51, 0.39, 0.63, 1);
 const Vector4 Debug::DARKRED = Vector4(0.58, 0.02, 0.02, 1);
-const Vector4 Debug::TURQUOISE = Vector4(0.02, 0.58, 0.47, 1);
+const Vector4 Debug::TURQUOISE = Vector4(0, 1, 1, 0.5);
 
 
 void Debug::Print(const std::string& text, const Vector2&pos, const Vector4& color) {

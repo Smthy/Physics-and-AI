@@ -1,1 +1,32 @@
-﻿  Common.vcxproj -> C:\Users\Owner\source\repos\Physics-and-AI\8503 Release - 2021\x64\Debug\Common.lib
+﻿  Assets.cpp
+  Camera.cpp
+  GameTimer.cpp
+  Keyboard.cpp
+  Maths.cpp
+  Matrix2.cpp
+  Matrix3.cpp
+  Matrix4.cpp
+  MeshAnimation.cpp
+  MeshGeometry.cpp
+  MeshMaterial.cpp
+  Mouse.cpp
+  Plane.cpp
+  Quaternion.cpp
+  RendererBase.cpp
+  ShaderBase.cpp
+  SimpleFont.cpp
+  TextureBase.cpp
+  TextureLoader.cpp
+  TextureWriter.cpp
+  Generating Code...
+  Compiling...
+  Vector2.cpp
+  Vector3.cpp
+  Vector4.cpp
+  Win32Keyboard.cpp
+  Win32Mouse.cpp
+  Win32Window.cpp
+  Window.cpp
+  Generating Code...
+H:\Desktop\Physics-and-AI\8503 Release - 2021\Common\MeshMaterial.cpp(48,44): warning C4267:  'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Common.vcxproj -> H:\Desktop\Physics-and-AI\8503 Release - 2021\x64\Debug\Common.lib

@@ -52,9 +52,9 @@ namespace NCL {
 			void MazeLoader(const std::string& filename);
 
 			GameObject* AddFloorToWorld(const Vector3& position, string name);
-			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name, float elstacity,float inverseMass = 10.0f);
-			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float elstacity,float inverseMass = 10.0f);
-			GameObject* AddAABBCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float elstacity,float inverseMass = 10.0f);
+			GameObject* AddSphereToWorld(const Vector3& position, float radius, string name, float elstacity, float friction,float inverseMass = 10.0f);
+			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float elstacity, float friction,float inverseMass = 10.0f);
+			GameObject* AddAABBCubeToWorld(const Vector3& position, Vector3 dimensions, Vector4 Color, string name, float elstacity, float inverseMass = 10.0f);
 
 			GameObject* AddCapsuleToWorld(const Vector3& position, float halfHeight, float radius, float inverseMass = 10.0f);
 

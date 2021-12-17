@@ -325,7 +325,7 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 
-GameObject* Level2::AddFloorToWorld(const Vector3& position, string name) {
+GameObject* Level2::AddFloorToWorld(const Vector3& position, float elascity, string name) {
 	GameObject* floor = new GameObject();
 
 	Vector3 floorSize = Vector3(500, 0.01, 500);
@@ -336,10 +336,9 @@ GameObject* Level2::AddFloorToWorld(const Vector3& position, string name) {
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
-
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
-
+	floor->GetPhysicsObject()->SetElasticity(elascity);
 
 	world->AddGameObject(floor);
 
@@ -405,7 +404,7 @@ rigid body representation. This and the cube function will let you build a lot o
 physics worlds. You'll probably need another function for the creation of OBB cubes too.
 
 */
-GameObject* Level2::AddSphereToWorld(const Vector3& position, float radius, string name, float inverseMass) {
+GameObject* Level2::AddSphereToWorld(const Vector3& position, float radius, string name, float elascity,float inverseMass) {
 	GameObject* sphere = new GameObject();
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
@@ -422,7 +421,7 @@ GameObject* Level2::AddSphereToWorld(const Vector3& position, float radius, stri
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
 	sphere->SetName(name);
 	sphere->GetPhysicsObject()->InitSphereInertia();
-
+	sphere->GetPhysicsObject()->SetElasticity(elascity);
 
 
 	world->AddGameObject(sphere);
@@ -475,11 +474,11 @@ void Level2::InitLevel2() {
 	mainMenuActive = false;
 	MazeLoader("TestGrid1.txt");
 
-	ball = AddSphereToWorld(Vector3(10, 0.5, 10), 1.0f, "Ball", 1.0f);
-	bAI = AddSphereToWorld(Vector3(130, 0.5, 140), 1.0f, "BTai", 1.0f);
+	ball = AddSphereToWorld(Vector3(10, 0.5, 10), 1.0f, "Ball", 0.5f,1.0f);
+	bAI = AddSphereToWorld(Vector3(130, 0.5, 140), 1.0f, "BTai", 0.5f,1.0f);
 	bAI->GetRenderObject()->SetColour(Debug::RED);
 	ball->GetRenderObject()->SetColour(Debug::BLUE);
-	AddFloorToWorld(Vector3(0, -1, 0), "floor2");
+	AddFloorToWorld(Vector3(0, -1, 0), 0.05f,"floor2");
 
 	DrawPath();
 	level2Loaded = true;
