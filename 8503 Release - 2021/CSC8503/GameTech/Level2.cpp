@@ -461,7 +461,7 @@ void Level2::MazeLoader(const std::string& filename) {
 			if (nLine[0] == 'x') {
 				for (int i = 0; i < nLine.length(); i++) {
 					if (nLine[i] == 'x') {
-						AddAABBCubeToWorld(Vector3(i * 10, 0.1, k * 10), Vector3(5, 5, 5), Debug::WHITE, "cube_:)", 0);
+						AddAABBCubeToWorld(Vector3(i * 10, 0.1, k * 10), Vector3(5, 5, 5), Debug::WHITE, "cube", 0);
 					}
 				}
 				k++;
@@ -509,18 +509,21 @@ void Level2::AIMovement(float dt) {
 	}
 
 	Vector3 currentPos = bAI->GetTransform().GetPosition();
+	if (testNodes.size() > 0) {
+		if (dis.Length() < 0.05f) {
+			std::cout << testNodes.size() << std::endl;
+			testNodes.clear();
+			DrawPath();
+			testNodes.erase(testNodes.cbegin());
+		}
 
-	if (dis.Length() < 0.05f) {
-		std::cout << testNodes.size() << std::endl;
-		testNodes.clear();
-		DrawPath();
-		testNodes.erase(testNodes.cbegin());
+		Vector3 dir = (testNodes[0] - currentPos);
+		dis = dir.Normalised();
+
+		bAI->GetTransform().SetPosition(currentPos + (dir * speed * dt));
 	}
 
-	Vector3 dir = (testNodes[0] - currentPos);
-	dis = dir.Normalised();
-
-	bAI->GetTransform().SetPosition(currentPos + (dir * speed * dt));
+	
 
 }
 

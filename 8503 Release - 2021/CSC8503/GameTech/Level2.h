@@ -112,7 +112,6 @@ namespace NCL {
 
 			vector<Vector3> testNodes;
 
-
 			int bAIPos = 0;
 			Vector3 tarPos;
 			Vector3 distance;

@@ -161,12 +161,10 @@ class IntroScreen : public PushdownState {
 	Debug::FlushRenderables(dt);
 	renderer->Render();
 
-	renderer->DrawString("Physics and AI", Vector2(20, 30), Debug::DARKPURPLE, 50.0f);
-
-	Debug::Print("Physics and AI", Vector2(30, 30), Debug::DARKPURPLE);
-	Debug::Print("Physics Level - Click 1", Vector2(30, 30), Debug::DARKPURPLE);
-	Debug::Print("AI Level - Click 2", Vector2(30, 30), Debug::DARKPURPLE);
-	Debug::Print("QUIT!", Vector2(40, 30), Debug::DARKPURPLE);
+	renderer->DrawString("Physics and AI", Vector2(20, 30), Debug::DARKRED, 50.0f);
+	renderer->DrawString("Physics Level - 1", Vector2(20, 50), Debug::DARKGREEN, 35.0f);
+	renderer->DrawString("AI Level - 2", Vector2(20, 60), Debug::DARKGREEN, 35.0f);
+	renderer->DrawString("Exit Game - Escape", Vector2(20, 70), Debug::DARKBLUE , 35.0f);
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::NUM1)) {
 		*newState = new GameScreen1();

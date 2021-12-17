@@ -70,7 +70,9 @@ namespace NCL {
 				//std::cout << "OnCollisionBegin event occured!\n";
 				if (this->GetName() == "Ball" && otherObject->GetName() == "Cube_21") {
 					
-					std::cout << "END GAME" << std::endl;					
+					std::cout << "END GAME" << std::endl;
+					endGameScene = true;
+					
 				}
 				if (this->GetName() == "Ball" && otherObject->GetName() == "floor") {
 					std::cout << "Hit floor" << std::endl;
@@ -98,6 +100,8 @@ namespace NCL {
 				return worldID;
 			}
 
+			bool endGameScene = false;
+
 		protected:
 			Transform			transform;
 
@@ -111,6 +115,7 @@ namespace NCL {
 			Vector4 color;			
 
 			Vector3 broadphaseAABB;
+			
 		};
 	}
 }

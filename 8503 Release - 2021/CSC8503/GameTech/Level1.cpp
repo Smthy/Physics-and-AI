@@ -15,6 +15,7 @@
 #include "../CSC8503Common/BehaviourSequence.h"
 #include "../CSC8503Common/BehaviourSelector.h"
 #include "../../Common/Assets.h"
+#include <chrono>  
 
 using namespace NCL;
 using namespace CSC8503;
@@ -147,15 +148,16 @@ void Level1::UpdateGame(float dt) {
 		playerFall--;
 		if (playerFall == 0) {
 			std::cout << "PLAYER FELL --- GAME OVER --- PLAYER FELL" << std::endl;
+			dt = 0;
 		}
 		else {
 			ball->GetTransform().SetPosition(Vector3(0, 25, 0));
 			ball->GetPhysicsObject()->SetAngularVelocity(Vector3(0, 0, 0));
-		}
-		
-		
-		
+			ball->GetPhysicsObject()->SetLinearVelocity(Vector3(0, 0, 0));
+		}		
 	}
+
+	
 }
 
 void Level1::MovingWall(float dt) {
@@ -315,31 +317,28 @@ void Level1::InitWorld() {
 	physics->Clear();
 
 	InitLevel1();
+	BridgeConstraintTest();
 }
 
 void Level1::BridgeConstraintTest() {
-	Vector3 cubeSize = Vector3(3, 0.1, 3);
-
-	float invCubeMass = 5; //how heavy the middle pieces are
-	int numLinks = 8;
-	float maxDistance = 2; // constraint distance
-	float cubeDistance = 8; // distance between links
-
-	Vector3 startPos = Vector3(-50, 100, 0);
-
-	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Vector4(1, 0, 0, 1), "bridge", 0);
-	GameObject* end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, Vector4(1, 1, 1, 1), "bridge", 0);
-	GameObject* previous = start;
-
+	Vector3 cubeSize = Vector3(1, 0.1, 3);
+	float invCubeMass = 1; //how heavy the middle pieces are
+	int numLinks = 3;
+	float maxDistance = 4; // constraint distance
+	float cubeDistance = 2; // distance between links
+	
+	Vector3 startPos = Vector3(5, -20, 0);
+	GameObject * start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, Debug::RED, "cubeStart", 0.825f, 0);
+	GameObject * end = AddCubeToWorld(startPos + Vector3((numLinks + 2)  * cubeDistance, 0, 0), cubeSize, Debug::RED, "cubeEnd", 0.825f, 0);
+	end->GetTransform().SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(0, 0, 1), 25.0f));
+	GameObject * previous = start;
 	for (int i = 0; i < numLinks; ++i) {
-		GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Vector4(1, 1, 1, 1), "bridge", invCubeMass);
-		PositionConstraint* constraint = new PositionConstraint(previous,
-			block, maxDistance);
+		GameObject * block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Debug::WHITE, "cubeMid", 0.825f, invCubeMass);
+		PositionConstraint * constraint = new PositionConstraint(previous, block, maxDistance);
 		world->AddConstraint(constraint);
 		previous = block;
 	}
-
-	PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
+	PositionConstraint * constraint = new PositionConstraint(previous, end, maxDistance);
 	world->AddConstraint(constraint);
 }
 
@@ -482,7 +481,7 @@ void Level1::InitLevel1() {
 	mainMenuActive = false;
 	//Section_1
 	AddCubeToWorld(Vector3(0, -15, 0), Vector3(3, 0.1, 3), Debug::ORANGE, "Cube_01", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -5.0f));
-	AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_02", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
+	//AddCubeToWorld(Vector3(10, -20, 0), Vector3(5, 0.1, 3), Debug::ORANGE, "Cube_02", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, 0.0f));
 	AddCubeToWorld(Vector3(20, -30, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
 	AddCubeToWorld(Vector3(26, -25, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
 	AddCubeToWorld(Vector3(32, -20, 0), Vector3(3, 8, 3), Debug::DARKGREEN, "BoostPadV", 0.825f, 0)->GetTransform().SetOrientation(Quaternion(0, 0, 1, -25.0f));
